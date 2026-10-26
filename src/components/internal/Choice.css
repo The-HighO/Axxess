@@ -1,0 +1,19 @@
+.axo-choice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  cursor: pointer;
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+}
+.axo-choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.axo-choice--disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
+.axo-choice input:focus-visible + span { outline: var(--focus-ring); outline-offset: 2px; }

@@ -1,0 +1,22 @@
+.axo-date { max-width: none; }
+.axo-date__trigger { justify-content: space-between; cursor: pointer; font: inherit; text-align: left; }
+.axo-date__trigger.is-open,
+.axo-date__trigger:focus-visible { border-width: 1.5px; border-color: var(--grayscale-900); outline: none; }
+.axo-date__display {
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+}
+.axo-date__trigger > .axo-icon { width: 16px; height: 16px; color: var(--grayscale-950); }
+
+/* The picker floats over the page under the field (see useFloatingPanel). */
+.axo-date__panel {
+  position: fixed;
+  z-index: 50;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--grayscale-150);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  box-shadow: var(--shadow-card-large);
+}

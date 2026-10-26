@@ -1,0 +1,38 @@
+.axo-nav-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+  height: 32px;
+  padding: var(--space-xs) var(--space-m);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--grayscale-500);
+  font: 500 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.axo-nav-item__main { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 0; }
+.axo-nav-item__main .axo-icon { width: 20px; height: 20px; color: var(--grayscale-400); }
+.axo-nav-item__chev {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--grayscale-400);
+}
+.axo-nav-item__chev .axo-icon { width: 16px; height: 16px; }
+.axo-nav-item:hover { background: var(--grayscale-100); }
+.axo-nav-item.is-active { background: var(--grayscale-100); color: var(--grayscale-800); }
+.axo-nav-item.is-active .axo-icon { color: var(--grayscale-700); }
+.axo-nav-item:focus-visible { outline: var(--focus-ring); outline-offset: -2px; }
+.axo-nav-item__chev .axo-icon { transition: transform 0.15s; }
+.axo-nav-item[aria-expanded="true"] .axo-nav-item__chev .axo-icon { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .axo-nav-item__chev .axo-icon { transition: none; }
+}

@@ -1,0 +1,11 @@
+/* Thin custom scrollbar thumb: 4px wide, Outline - Secondary stroke, at most 75px long. */
+.axo-scroll-thumb {
+  position: absolute;
+  right: 3px;
+  width: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--grayscale-200);
+  cursor: grab;
+  touch-action: none;
+}
+.axo-scroll-thumb:active { cursor: grabbing; }

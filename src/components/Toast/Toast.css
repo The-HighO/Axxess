@@ -1,0 +1,59 @@
+/* Toasts: grayscale-950 surface, 10px corners (from the Toasts page), white text. */
+.axo-toast {
+  box-sizing: border-box;
+  display: flex;
+  border-radius: 10px;
+  background: var(--grayscale-950);
+  color: var(--white);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+/* One row: icon + title, then the action 20px after */
+.axo-toast--inline { align-items: center; gap: 20px; padding: 17.5px 15px; }
+.axo-toast--inline.has-action { padding: 15px; }
+/* Stacked: title row, body 5px under it, action 15px under that */
+.axo-toast--stacked { flex-direction: column; align-items: flex-start; gap: 15px; width: 520px; max-width: 100%; padding: 15px; }
+
+.axo-toast__text { display: flex; flex-direction: column; gap: 5px; }
+/* Icon lines up with the first line of the title (a 24px icon on a ~20px line), so long titles wrap cleanly */
+.axo-toast__header { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.axo-toast__title { margin: 0; font: 500 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); color: var(--white); }
+.axo-toast__body { margin: 0; font: 400 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); color: var(--grayscale-100); }
+
+.axo-toast__icon { flex: none; margin-block: -2px; }
+.axo-toast__icon.is-default { color: var(--white); }
+.axo-toast__icon.is-success { color: var(--supporting-success-500); }
+.axo-toast__icon.is-warning { color: var(--warning-500); }
+.axo-toast__icon.is-error { color: var(--danger-500); }
+
+/* The "Okay" button is a small Black button with 12.5px side padding */
+.axo-toast__action.axo-btn--small { flex: none; padding: 10px 12.5px; }
+.axo-toast .axo-btn:focus-visible { outline-color: var(--white); }
+
+/* The stack: bottom centre, 24px above the screen edge, newest at the bottom */
+.axo-toaster {
+  position: fixed;
+  z-index: 100;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+.axo-toaster__item { pointer-events: auto; max-width: 100%; animation: axo-toast-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* Floating over the page, toasts take the dropdown shadow so they separate from what's behind */
+.axo-toaster__item .axo-toast { box-shadow: var(--shadow-card-large); }
+.axo-toaster__item.is-leaving { animation: axo-toast-out 0.24s cubic-bezier(0.4, 0, 1, 1) forwards; }
+.axo-toaster .axo-toast--inline .axo-toast__title { white-space: normal; }
+/* In from below the bottom edge, rising into place; out the same way, dropping off the bottom */
+@keyframes axo-toast-in { from { opacity: 0; transform: translateY(calc(100% + 24px)); } to { opacity: 1; transform: none; } }
+@keyframes axo-toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(calc(100% + 24px)); } }
+@media (prefers-reduced-motion: reduce) {
+  .axo-toaster__item,
+  .axo-toaster__item.is-leaving { animation-duration: 1ms; }
+}

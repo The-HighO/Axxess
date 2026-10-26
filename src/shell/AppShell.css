@@ -1,0 +1,111 @@
+/* 238px sidebar, then the page with 64px side margins (302px from the left at 1440px).
+   The window never scrolls: the sidebar and top bar stay fixed and only the content area scrolls. */
+.shell-app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--white);
+}
+.shell-app__nav-wrap { flex: none; height: 100%; }
+.shell-app__nav { height: 100%; overflow-y: auto; }
+/* 28px square showing only the mark at the left of the wordmark image */
+.shell-app__org-logo { display: block; flex: none; width: 28px; height: 28px; overflow: hidden; }
+.shell-app__org-logo img { display: block; height: 100%; width: auto; max-width: none; }
+.shell-app__main { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.shell-app__top {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  height: 72px;
+  padding: 0 64px;
+}
+/* Side margins live inside the scroll area so its scrollbar sits at the window edge. */
+.shell-app__content-wrap { position: relative; flex: 1 1 auto; min-height: 0; }
+/* The scroll area: the dropdowns' ScrollThumb replaces the native scrollbar, and there's no overscroll bounce.
+   Being positioned, it also contains absolutely placed children (like screen-reader-only text). */
+.shell-app__content {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  padding: 0 64px;
+}
+.shell-app__content::-webkit-scrollbar { display: none; }
+.shell-app__top-left { display: flex; align-items: center; gap: var(--space-s); flex: 0 1 737px; min-width: 0; }
+.shell-app__top-left > :last-child { flex: 1 1 auto; min-width: 0; }
+.shell-app__nav-toggle { flex: none; color: var(--grayscale-700); }
+.shell-app__top-right { display: flex; align-items: center; }
+.shell-app__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 100px;
+  background: none;
+  color: var(--grayscale-900);
+  cursor: pointer;
+}
+.shell-app__icon-btn:hover { background: var(--grayscale-50); }
+/* 30px photo in a 40px target, 8px after the bell */
+.shell-app__profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: var(--space-s);
+  padding: 0;
+  border: 0;
+  border-radius: 100px;
+  background: none;
+  cursor: pointer;
+}
+.shell-app__profile:hover .axo-avatar { box-shadow: 0 0 0 3px var(--grayscale-100); }
+.shell-app__profile:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+/* Figma frames the portrait photo a little above centre */
+.shell-app__profile-photo img { object-position: 50% 20%; }
+.shell-app__icon-btn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+@media (max-width: 1000px) {
+  /* The sidebar becomes a drawer: off-screen to the left until the top-bar toggle opens it. */
+  .shell-app__nav-wrap {
+    position: fixed;
+    z-index: 70;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    max-width: calc(100vw - 48px);
+    box-shadow: var(--shadow-large);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.24s cubic-bezier(0.4, 0, 1, 1), visibility 0s 0.24s;
+  }
+  .shell-app__nav-wrap.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .shell-app__scrim {
+    position: fixed;
+    z-index: 65;
+    inset: 0;
+    background: color-mix(in srgb, var(--grayscale-950) 32%, transparent);
+    animation: shell-scrim-in 0.24s ease-out;
+  }
+  .shell-app__top,
+  .shell-app__content { padding: 0 16px; }
+}
+@keyframes shell-scrim-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .shell-app__nav-wrap,
+  .shell-app__nav-wrap.is-open { transition: none; }
+  .shell-app__scrim { animation: none; }
+}

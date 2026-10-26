@@ -1,0 +1,56 @@
+.axo-filter {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 28px;
+  padding: 8px 6px 8px 12px;
+  border: 1px dashed var(--grayscale-150);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--grayscale-500);
+  font: 500 12px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.axo-filter .axo-icon { width: 16px; height: 16px; color: var(--grayscale-400); }
+.axo-filter:focus-visible,
+.axo-filter__clear:focus-visible,
+.axo-filter__open:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+.axo-filter--active { gap: var(--space-xs); border-style: solid; border-color: var(--grayscale-200); cursor: default; }
+.axo-filter__clear,
+.axo-filter__open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.axo-filter__clear { border-radius: 50%; }
+.axo-filter__clear .axo-icon { width: 12px; height: 12px; }
+.axo-filter__open > .axo-icon { color: var(--grayscale-700); }
+.axo-filter__pair { display: inline-flex; align-items: center; gap: 6px; }
+.axo-filter__rule { width: 1px; height: 11px; background: var(--grayscale-150); }
+.axo-filter__value { color: var(--grayscale-800); }
+
+/* Chevron points up while the chip's menu is open */
+.axo-filter > .axo-icon:last-child,
+.axo-filter__open > .axo-icon:last-child { transition: transform 0.15s; }
+.axo-filter[aria-expanded="true"] > .axo-icon:last-child,
+.axo-filter__open[aria-expanded="true"] > .axo-icon:last-child { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .axo-filter > .axo-icon:last-child,
+  .axo-filter__open > .axo-icon:last-child { transition: none; }
+}
+
+/* Date filter: the chip plus its floating range picker */
+.axo-date-filter,
+.axo-date-filter__anchor { display: inline-flex; }

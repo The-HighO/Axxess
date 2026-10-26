@@ -1,0 +1,38 @@
+/* Range picker: the calendar's pill header style, used again for a start → end bar on top. */
+.axo-range {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: var(--space-m);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+.axo-range__calendar { padding: 0; }
+.axo-range__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  height: 48px;
+  padding: 0 var(--space-s);
+  border-radius: var(--radius-pill);
+  background: var(--grayscale-50);
+}
+.axo-range__arrow { flex: none; color: var(--grayscale-800); }
+/* Each end is a pill like the month/year buttons; the one the next click sets sits on white. */
+.axo-range__end {
+  padding: 6px 12px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  font: 500 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.axo-range__end.is-empty { color: var(--grayscale-400); font-weight: 400; }
+.axo-range__end:hover { background: var(--grayscale-100); }
+.axo-range__end.is-active { background: var(--white); box-shadow: 0 0 0 1px var(--grayscale-150); }
+.axo-range__end:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }

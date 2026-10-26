@@ -1,0 +1,45 @@
+.axo-search {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: var(--space-xs) var(--space-m);
+  border: 1px solid var(--grayscale-150);
+  border-radius: 100px;
+  background: var(--white);
+  cursor: text;
+}
+.axo-search:focus-within { border-color: var(--grayscale-900); }
+.axo-search > .axo-icon { color: var(--grayscale-400); }
+.axo-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+}
+.axo-search input::placeholder { color: var(--grayscale-500); opacity: 1; }
+.axo-search input::-webkit-search-cancel-button { cursor: pointer; }
+.axo-search__kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 20px;
+  padding: 0 6px;
+  border: 0.5px solid var(--grayscale-50);
+  border-radius: 100px;
+  background: var(--white);
+  box-shadow: inset 0 -1.5px 0.5px 0 rgba(7, 7, 7, 0.06), 0 1px 1.5px rgba(7, 7, 7, 0.04);
+  color: var(--grayscale-400);
+  font: 500 10px/15px var(--font-inter);
+}
+/* Phones and touch screens have no ⌘K to press, so the hint just takes up room there */
+@media (max-width: 600px), (hover: none) and (pointer: coarse) {
+  .axo-search__kbd { display: none; }
+}

@@ -1,0 +1,26 @@
+.axo-toggle {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 25px;
+  border-radius: 12.5px;
+  background: var(--grayscale-150);
+  transition: background 0.15s;
+}
+.axo-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: transform 0.15s;
+}
+input:checked + .axo-toggle { background: var(--grayscale-950); }
+input:checked + .axo-toggle::after { transform: translateX(15px); }
+@media (prefers-reduced-motion: reduce) {
+  .axo-toggle,
+  .axo-toggle::after { transition: none; }
+}

@@ -1,0 +1,10 @@
+.axo-radio {
+  box-sizing: border-box;
+  flex: none;
+  width: 25px;
+  height: 25px;
+  border: 2px solid var(--grayscale-150);
+  border-radius: 50px;
+  background: var(--white);
+}
+input:checked + .axo-radio { border: 8px solid var(--grayscale-950); }

@@ -1,0 +1,173 @@
+/* Calendar date picker in Axxess OS tokens: a pill header on grayscale-50 and
+   fully round selections filled grayscale-950 (the primary button colour). */
+.axo-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: var(--space-m);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+
+/* Header: prev / "May, 2025" / next, or back / "Choose month" */
+.axo-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  height: 48px;
+  padding: 0 var(--space-s);
+  border-radius: var(--radius-pill);
+  background: var(--grayscale-50);
+}
+.axo-calendar__header .axo-btn--icon-only .axo-icon { width: 16px; height: 16px; }
+.axo-calendar__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font: 500 14px/var(--leading) var(--font-sans);
+  color: var(--grayscale-800);
+}
+/* Month and year: a roomy hover pill, 10px at the sides and 4px top and bottom. */
+.axo-calendar__title-btn {
+  padding: 4px 10px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.axo-calendar__title-btn:hover { background: var(--grayscale-100); }
+/* Pull the year back towards the month so the text still reads "Apr, 2027" with a normal space. */
+/* The month sits on top where the two overlap, so the comma always belongs to the month. */
+.axo-calendar__title-btn + .axo-calendar__title-btn { margin-left: -12px; }
+.axo-calendar__title-btn:first-child { position: relative; z-index: 1; }
+.axo-calendar__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--grayscale-800);
+  cursor: pointer;
+}
+.axo-calendar__back .axo-icon { transform: rotate(180deg); }
+.axo-calendar__back:hover { background: var(--grayscale-100); }
+.axo-calendar__spacer { width: 30px; }
+
+.axo-calendar__body { position: relative; }
+
+/* Days */
+.axo-calendar__days { display: flex; flex-direction: column; gap: 4px; }
+.axo-calendar__weekdays,
+.axo-calendar__week { display: grid; grid-template-columns: repeat(7, 1fr); }
+.axo-calendar__weekdays span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  font: 500 12px/1 var(--font-sans);
+  color: var(--grayscale-500);
+}
+.axo-calendar__week { height: 40px; }
+.axo-calendar__week > span { display: flex; align-items: center; justify-content: center; }
+.axo-calendar__day {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font: 400 14px/1 var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+  cursor: pointer;
+}
+.axo-calendar__day.is-outside { color: var(--grayscale-200); }
+.axo-calendar__day.is-today { box-shadow: inset 0 0 0 1px var(--grayscale-200); }
+
+/* Months and years */
+.axo-calendar__months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--space-s);
+  height: 100%;
+}
+/* Months keep the 3 x 4 layout, but each hover/selected pill is the size of a year pill
+   (44px tall, about a quarter of the row wide) rather than filling its whole grid cell. */
+.axo-calendar__months .axo-calendar__cell {
+  justify-self: center;
+  align-self: center;
+  width: 75%;
+  height: 44px;
+}
+.axo-calendar__years-wrap { position: relative; height: 100%; }
+.axo-calendar__years {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 44px;
+  gap: var(--space-s) var(--space-xs);
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding: var(--space-s) 0;
+  box-sizing: border-box;
+  --fade-top: #000;
+  --fade-bottom: #000;
+  -webkit-mask-image: linear-gradient(to bottom, var(--fade-top) 0, #000 14%, #000 84%, var(--fade-bottom) 100%);
+  mask-image: linear-gradient(to bottom, var(--fade-top) 0, #000 14%, #000 84%, var(--fade-bottom) 100%);
+}
+/* Fade an edge only when more years lie past it */
+.axo-calendar__years.fade-top { --fade-top: transparent; }
+.axo-calendar__years.fade-bottom { --fade-bottom: transparent; }
+.axo-calendar__years::-webkit-scrollbar { display: none; }
+.axo-calendar__cell {
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  font: 400 14px/1 var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+  cursor: pointer;
+}
+
+/* Shared states */
+.axo-calendar__day:hover:not(:disabled):not(.is-selected),
+.axo-calendar__cell:hover:not(:disabled):not(.is-selected) { background: var(--grayscale-50); }
+.axo-calendar__day.is-selected,
+.axo-calendar__cell.is-selected { background: var(--grayscale-950); color: var(--white); font-weight: 500; box-shadow: none; }
+.axo-calendar__day:disabled,
+.axo-calendar__cell:disabled { color: var(--grayscale-200); cursor: default; }
+.axo-calendar button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+/* Range band (DateRangePicker): one continuous grayscale-950 band from start to end, rounded
+   at both ends like the selected-day circle and square where a week wraps. While choosing
+   the end, a grayscale-100 preview runs up to the hovered day. */
+.axo-calendar__week > span { position: relative; }
+.axo-calendar__week > span.in-range::before,
+.axo-calendar__week > span.in-preview::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+}
+.axo-calendar__week > span.in-range::before { background: var(--grayscale-950); }
+.axo-calendar__week > span.in-preview::before { background: var(--grayscale-100); }
+.axo-calendar__week > span.band-start::before { left: calc(50% - 18px); border-radius: 18px 0 0 18px; }
+.axo-calendar__week > span.band-end::before { right: calc(50% - 18px); border-radius: 0 18px 18px 0; }
+.axo-calendar__week > span .axo-calendar__day { position: relative; }
+.axo-calendar__week > span.in-range .axo-calendar__day { color: var(--white); font-weight: 500; }
+.axo-calendar__week > span.in-range .axo-calendar__day.is-today { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4); }
+.axo-calendar__week > span.in-range .axo-calendar__day:hover:not(:disabled):not(.is-selected) { background: var(--grayscale-800); }
+.axo-calendar__week > span.in-preview .axo-calendar__day:hover:not(:disabled):not(.is-selected) { background: var(--grayscale-200); }

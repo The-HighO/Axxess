@@ -1,0 +1,26 @@
+.axo-pagination { display: flex; align-items: center; justify-content: space-between; gap: var(--space-m); padding: 12px 0; }
+.axo-pagination__size { display: flex; align-items: center; gap: var(--space-s); }
+.axo-filter--solid { border-style: solid; }
+.axo-pagination__per { font: 500 12px/20px var(--font-inter); letter-spacing: 0.05px; color: var(--grayscale-500); }
+.axo-pagination__pages { display: flex; align-items: center; }
+.axo-pagination__step,
+.axo-pagination__page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--white);
+  color: var(--grayscale-500);
+  font: 500 12px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+.axo-pagination__step { border-radius: 4px; color: var(--grayscale-400); cursor: pointer; }
+.axo-pagination__step:disabled { opacity: var(--opacity-disabled); cursor: default; }
+.axo-pagination__page { border-radius: 100px; cursor: pointer; }
+.axo-pagination__page.is-current { background: var(--grayscale-50); color: var(--grayscale-800); }
+.axo-pagination__gap { color: var(--grayscale-400); cursor: default; }
+.axo-pagination button:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }

@@ -1,0 +1,104 @@
+/* Axxess OS tokens, from the Software Design Figma file.
+   Names follow the Figma variables (Grayscale/150 -> --grayscale-150). */
+:root {
+  /* Color */
+  --white: #ffffff;
+  --background-default: #fafbfb;
+  --grayscale-50: #f7f7f8;   /* Background - Secondary */
+  --grayscale-100: #eeeef0;
+  --grayscale-150: #e3e3e7;  /* Outline - Primary */
+  --grayscale-200: #d9d9de;  /* Outline - Secondary */
+  --grayscale-400: #9394a1;  /* Icon - Secondary */
+  --grayscale-500: #747686;  /* Text - Secondary */
+  --grayscale-700: #42434d;  /* Icon - Primary */
+  --grayscale-800: #2f3037;  /* Text - Primary */
+  --grayscale-900: #212126;  /* Border - Active */
+  --grayscale-950: #131316;
+  --primary-base: #19a549;
+  --success-500: #349c2e;
+  --supporting-success-500: #5cb85c; /* Supporting/Success/green-500: toast success icon */
+  --warning-500: #ea961c;
+  --warning-600: #c37d17;   /* pending text and timeline line */
+  --danger-500: #dc2626;
+  --danger-600: #c82323;
+  --input-negative: #de0028; /* raw value in Figma, not a variable */
+  --accent-electric-orchid: #f96cff;
+  --accent-skyline-blue: #4fb0fd;
+  --accent-lavender-glow: #b495f8;
+  --accent-access-red: #8c0019;
+  --accent-fiery-coral: #ff5c5c;
+  --accent-access-brown: #735f4f;
+  --accent-meadow-green: #98c179;
+  --button-neutral: #eceff1;
+  --soap-200: #ebedef;       /* Colours/Greys/Soap/200: panel section dividers */
+
+  /* Type */
+  --font-sans: "Google Sans Flex", "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-inter: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tracking: -0.03em;
+  --leading: 1.45;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-xl: 24px;
+  --space-xxl: 40px;
+
+  /* Radius */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;        /* L: option and summary cards */
+  --radius-xl: 24px;        /* side panels */
+  --radius-pill: 999px;
+
+  /* Other */
+  --opacity-disabled: 0.4;
+  /* cards-shadow-large: dropdown popovers */
+  --shadow-card-large:
+    0 0 0 1px rgba(44, 49, 55, 0.04), 0 1px 1px -0.5px rgba(44, 49, 55, 0.04),
+    0 2px 2px -1px rgba(44, 49, 55, 0.04), 0 4px 4px -2px rgba(44, 49, 55, 0.04),
+    0 8px 8px -4px rgba(44, 49, 55, 0.04), 0 16px 16px -8px rgba(44, 49, 55, 0.04),
+    0 15px 32px 0 rgba(44, 49, 55, 0.12);
+  /* Large: side panels */
+  --shadow-large: 0 15px 35px 0 rgba(14, 15, 12, 0.12), 0 5px 15px 0 rgba(14, 15, 12, 0.08);
+  --focus-ring: 2px solid var(--grayscale-950);
+}
+
+/* Text styles */
+.paragraph-medium-medium { font: 500 16px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.paragraph-small-medium { font: 500 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.paragraph-small-regular { font: 400 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.paragraph-xsmall-medium { font: 500 12px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.paragraph-xsmall-regular { font: 400 12px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.badge-label { font: 600 12px/16px var(--font-sans); letter-spacing: var(--tracking); text-transform: uppercase; }
+.section-label { font: 500 12px/1.2 var(--font-sans); text-transform: uppercase; }
+.display-heading { font: 700 44px/42px var(--font-sans); letter-spacing: -1.3px; text-transform: uppercase; }
+.heading-h5-medium { font: 500 24px/1.2 var(--font-sans); letter-spacing: var(--tracking); }
+.caption-small { font: 500 12px/1.2 var(--font-sans); text-transform: uppercase; }
+.body-emphasized { font: 500 14px/22px var(--font-inter); }
+
+/* Hidden visually, still read by screen readers */
+.axo-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Touch screens: iOS Safari zooms the page into any text field under 16px when it gets focus
+   (and leaves it zoomed). Typed-in fields use 16px there so the page stays fit to the screen;
+   pinch-zoom still works. Desktop keeps the 14px design size. */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

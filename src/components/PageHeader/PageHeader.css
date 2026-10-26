@@ -1,0 +1,20 @@
+.axo-page-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  height: 76px;
+  padding: var(--space-xl) 32px;
+  border-bottom: 1px solid var(--grayscale-150);
+  background: var(--white);
+}
+.axo-page-header .axo-btn--icon-only .axo-icon { width: 14px; height: 14px; }
+.axo-page-header__rule { width: 1px; height: 20px; background: var(--grayscale-150); }
+.axo-page-header__title {
+  margin: 0;
+  color: var(--grayscale-800);
+  font: 500 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+/* Close stays a 30px small button; its icon is 18px rather than the small button's 14px */
+.axo-page-header__close.axo-btn--small .axo-icon { width: 18px; height: 18px; }

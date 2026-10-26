@@ -1,0 +1,28 @@
+.axo-avatar {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  padding: 5px;
+  overflow: hidden;
+  border-radius: 50px;
+  background: var(--grayscale-900);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  line-height: var(--leading);
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+}
+/* Initials: trim the text box to the capital letters so flex centering centres the
+   letters themselves, not the font's line box (which has more room above caps than below).
+   The margin gives back the trailing letter-spacing so the pair is centred left to right. */
+.axo-avatar > span {
+  display: block;
+  line-height: 1;
+  text-box: trim-both cap alphabetic;
+  margin-right: 0.03em;
+}
+.axo-avatar--image { padding: 0; }
+.axo-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }

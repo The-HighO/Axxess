@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="circle placeholder on">
+<g id="Icon">
+<path d="M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" fill="#D2F4DE"/>
+<mask id="stroke0_0_460" maskUnits="userSpaceOnUse" x="0.5" y="0.5" width="19" height="19" fill="black">
+<rect fill="white" x="0.5" y="0.5" width="19" height="19"/>
+<path d="M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z"/>
+</mask>
+<path d="M17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5C14.1421 2.5 17.5 5.85786 17.5 10Z" stroke-width="3" stroke="#19A549" mask="url(#stroke0_0_460)"/>
+</g>
+</g>
+</svg>

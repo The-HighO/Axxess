@@ -1,0 +1,31 @@
+.axo-check {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 25px;
+  height: 25px;
+  border: 1.5px solid var(--grayscale-150);
+  border-radius: 50px;
+  color: var(--white);
+}
+.axo-check .axo-icon { visibility: hidden; }
+input:checked + .axo-check { background: var(--grayscale-950); border: 0.5px solid var(--grayscale-950); }
+input:checked + .axo-check .axo-icon { visibility: visible; }
+
+/* Table row selection: 16px square, 4px corners, a hairline shadow */
+.axo-choice--table .axo-check {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grayscale-150);
+  border-radius: 4px;
+  background: var(--white);
+  box-shadow: 0 4px 4px -2px rgba(44, 49, 55, 0.04), 0 2px 2px -1px rgba(44, 49, 55, 0.04),
+    0 1px 1px -0.5px rgba(44, 49, 55, 0.04), 0 0 0 1px rgba(44, 49, 55, 0.04);
+}
+.axo-choice--table .axo-check .axo-icon { width: 9px; height: 9px; }
+.axo-choice--table input:checked + .axo-check { border: 1px solid var(--grayscale-950); background: var(--grayscale-950); }
+.axo-choice--table input:indeterminate + .axo-check { border: 1px solid var(--grayscale-950); background: var(--grayscale-950); }
+.axo-choice--table input:indeterminate + .axo-check::after { content: ""; width: 8px; height: 1.5px; border-radius: 1px; background: var(--white); }
+.axo-choice--table input:indeterminate + .axo-check .axo-icon { display: none; }

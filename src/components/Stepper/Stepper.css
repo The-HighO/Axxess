@@ -1,0 +1,64 @@
+.axo-stepper { width: 208px; font: 400 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.axo-stepper__list,
+.axo-stepper__sublist { margin: 0; padding: 0; list-style: none; }
+.axo-stepper__list { display: flex; flex-direction: column; gap: 12px; }
+.axo-stepper__step { display: flex; flex-direction: column; gap: var(--space-s); }
+
+.axo-stepper__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--grayscale-500);
+  text-align: left;
+}
+button.axo-stepper__head { cursor: pointer; }
+button.axo-stepper__head:hover span { color: var(--grayscale-800); }
+/* The step you're on is emphasised whatever its icon (a filled step you return to keeps its check). */
+.axo-stepper__step.is-here .axo-stepper__head { color: var(--grayscale-800); font-weight: 500; }
+.axo-stepper__icon.is-done,
+.axo-stepper__icon.is-current { color: var(--primary-base); }
+.axo-stepper__icon.is-pending { color: var(--grayscale-400); }
+
+/* Sub-steps: a 3px progress bar in a 20px gutter, then a grey box of labels */
+.axo-stepper__subs { display: flex; align-items: center; gap: var(--space-s); }
+.axo-stepper__bar { display: flex; flex-direction: column; align-items: center; width: 20px; flex: none; }
+.axo-stepper__seg { width: 3px; height: 24px; background: var(--grayscale-150); }
+.axo-stepper__seg.is-filled { background: var(--grayscale-900); }
+.axo-stepper__seg:first-child { border-radius: 10px 10px 0 0; }
+.axo-stepper__seg:last-child { border-radius: 0 0 10px 10px; }
+.axo-stepper__seg:only-child { border-radius: 10px; }
+
+.axo-stepper__sublist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  padding: var(--space-s) 12px;
+  border-radius: var(--space-s);
+  background: var(--grayscale-50);
+}
+.axo-stepper__sub { color: var(--grayscale-500); }
+.axo-stepper__sub.is-current { color: var(--grayscale-800); font-weight: 500; }
+.axo-stepper__sub button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.axo-stepper__sub button:hover { color: var(--grayscale-800); }
+.axo-stepper button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 2px; }
+
+/* Compact (narrow screens): icons in a row, 16px apart; only the current step is named.
+   The current step's sub-steps sit under the row, full width. */
+.axo-stepper--compact { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.axo-stepper--compact .axo-stepper__list { flex-direction: row; align-items: center; gap: var(--space-m); }
+.axo-stepper--compact .axo-stepper__step { flex: none; }
+.axo-stepper--compact button.axo-stepper__head { border-radius: var(--radius-sm); }

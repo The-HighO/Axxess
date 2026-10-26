@@ -1,0 +1,49 @@
+.axo-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--grayscale-800);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: var(--leading);
+  letter-spacing: var(--tracking);
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+.axo-btn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.axo-btn:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
+
+/* Sizes */
+.axo-btn--large { height: 50px; padding: 12px 28px; font-size: 16px; }
+.axo-btn--medium { height: 40px; padding: 8px 20px; font-size: 14px; }
+.axo-btn--small { height: 30px; padding: 8px 12px; font-size: 12px; }
+.axo-btn--large .axo-icon { width: 20px; height: 20px; }
+.axo-btn--medium .axo-icon { width: 16px; height: 16px; }
+.axo-btn--small .axo-icon { width: 14px; height: 14px; }
+
+/* Variants */
+.axo-btn--primary { background: var(--grayscale-950); border-color: var(--grayscale-950); color: var(--white); }
+.axo-btn--neutral { background: var(--white); border-width: 1px; border-color: var(--grayscale-150); }
+.axo-btn--destructive { background: var(--danger-600); border-color: var(--danger-600); color: var(--white); }
+/* Button / Black: for dark surfaces such as toasts */
+.axo-btn--black { background: var(--grayscale-800); border-color: var(--grayscale-800); color: var(--white); }
+.axo-btn--destructive-outline { border-color: var(--danger-600); color: var(--danger-600); }
+
+.axo-btn--text { border: 0; gap: 5px; }
+.axo-btn--text.axo-btn--large,
+.axo-btn--text.axo-btn--medium { padding: 10px 20px; }
+.axo-btn--text.axo-btn--small { padding: 10px; }
+.axo-btn--text.axo-btn--medium .axo-icon,
+.axo-btn--text.axo-btn--small .axo-icon { width: 15px; height: 15px; }
+
+/* Icon only: square */
+.axo-btn--icon-only { padding: 0; }
+.axo-btn--icon-only.axo-btn--large { width: 50px; }
+.axo-btn--icon-only.axo-btn--medium { width: 40px; }
+.axo-btn--icon-only.axo-btn--small { width: 30px; }

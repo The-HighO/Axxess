@@ -1,0 +1,122 @@
+/* Request Access page: 76px header, stepper 76px from the left, a 400px column centred, both 64px below the header.
+   The page itself never scrolls: the header and stepper stay fixed and only the content area scrolls. */
+.ra {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--white);
+}
+.ra > .axo-page-header { flex: none; }
+.ra__body { position: relative; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.ra__stepper { position: absolute; z-index: 3; top: 64px; left: 76px; }
+
+/* The step title: its own non-scrolling bar, 64px under the header, centred over the 400px column. */
+.ra__titlebar { flex: none; padding: 64px 32px 0; background: var(--white); }
+.ra__titlebar .ra__heading { width: 400px; max-width: 100%; margin: 0 auto; }
+
+/* Below it, the scroll area. Native scrollbar hidden in favour of the dropdowns' ScrollThumb;
+   no overscroll bounce. Content starts 40px under the title, and slips under a soft fade. */
+.ra__scroll-wrap { position: relative; flex: 1 1 auto; min-height: 0; }
+.ra__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  padding: var(--space-xxl) 32px 80px;
+  scroll-padding-top: 40px; /* keep focused fields clear of the fade */
+}
+.ra__scroll::-webkit-scrollbar { display: none; }
+.ra__fade {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--white) 0%, rgba(255, 255, 255, 0.85) 35%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%);
+}
+.ra__scroll-wrap > .axo-scroll-thumb { z-index: 3; }
+.ra__main { width: 400px; max-width: 100%; margin: 0 auto; }
+.ra__form { display: flex; flex-direction: column; gap: var(--space-xxl); }
+.ra__heading {
+  margin: 0;
+  color: var(--grayscale-800);
+  font: 700 44px/42px var(--font-sans);
+  letter-spacing: -1.3px;
+  text-transform: uppercase;
+}
+.ra__heading:focus { outline: none; }
+.ra__lede { margin: 0; color: var(--grayscale-500); font: 400 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+.ra__continue { width: 100%; }
+
+/* Content blocks */
+.ra-cards { display: flex; flex-direction: column; gap: var(--space-xl); }
+.ra-cards .axo-field { max-width: none; }
+.ra-card--loose .axo-option-card__body { gap: var(--space-xxl); }
+.ra-reason { max-width: none; }
+
+/* A solid card for summaries (application details, review) */
+.ra-summary {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding: var(--space-m);
+  border: 1px solid var(--grayscale-150);
+  border-radius: var(--radius-lg);
+}
+.ra-summary.is-active { border: 2px solid var(--grayscale-900); padding: 15px; }
+.ra-summary__section { display: flex; flex-direction: column; gap: var(--space-m); font: 400 14px/var(--leading) var(--font-sans); letter-spacing: var(--tracking); }
+
+/* Radio rows inside cards: text left, control right */
+.ra-radio-group { display: flex; flex-direction: column; gap: var(--space-m); }
+.ra-radio-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  cursor: pointer;
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+.ra-radio-row input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.ra-radio-row input:focus-visible + .axo-radio { outline: var(--focus-ring); outline-offset: 2px; }
+.ra-radio-row__text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.ra-radio-row__title { font-weight: 500; color: var(--grayscale-800); }
+.ra-radio-row__desc { color: var(--grayscale-500); }
+
+/* Below the width where the stepper and column fit side by side, stack them. */
+/* Narrow screens: the stepper sits above the content, still fixed; the content scrolls below it. */
+@media (max-width: 1000px) {
+  .ra__body { display: flex; flex-direction: column; }
+  .ra__stepper {
+    position: static;
+    flex: none;
+    box-sizing: border-box;
+    width: 432px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 16px;
+  }
+  .ra__titlebar { padding: 24px 16px 0; }
+  .ra__scroll { padding: var(--space-xxl) 16px 64px; }
+}
+/* Phones: compact stepper; the title moves into the scroll area, 24px under the stepper and 40px above the form. */
+@media (max-width: 600px) {
+  .ra__stepper { padding-bottom: 12px; }
+  .ra__scroll { padding-top: 24px; }
+  .ra__main { display: flex; flex-direction: column; gap: var(--space-xxl); }
+}
+@media (max-width: 480px) {
+  .ra__heading { font-size: 34px; line-height: 34px; }
+  .axo-page-header { padding-inline: 16px; }
+}

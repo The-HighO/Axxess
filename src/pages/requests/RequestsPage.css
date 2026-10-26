@@ -1,0 +1,133 @@
+/* Requests page: 32px under the top bar; 48px between the heading block and the table block.
+   On wide screens the title row and tabs stretch edge to edge with the content area, while the
+   filters, table and pagination keep their 1074px design width, centred. */
+.rq { display: flex; flex-direction: column; gap: 48px; padding: 32px 0; }
+.rq__head { display: flex; flex-direction: column; gap: var(--space-xl); }
+.rq__title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-m); }
+.rq__title {
+  margin: 0;
+  color: var(--grayscale-800);
+  font: 700 44px/42px var(--font-sans);
+  letter-spacing: -1.3px;
+  text-transform: uppercase;
+}
+.rq__tabs { display: flex; gap: var(--space-xl); border-bottom: 1px solid var(--grayscale-150); }
+.rq__body { display: flex; flex-direction: column; gap: var(--space-xl); width: 100%; max-width: 1074px; margin: 0 auto; }
+.rq__filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s); min-height: 32px; }
+
+/* Table */
+.rq__table-wrap { overflow-x: auto; }
+.rq-table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+}
+.rq-table th,
+.rq-table td { padding: 0 var(--space-s); border-bottom: 1px solid var(--grayscale-150); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rq-table th { position: relative; height: 40px; font: 500 12px/var(--leading) var(--font-sans); color: var(--grayscale-500); }
+.rq-table td { height: 48px; font-weight: 500; }
+.rq-th { display: inline-flex; align-items: center; gap: var(--space-s); }
+.rq-th .axo-icon { color: var(--grayscale-400); }
+.rq-table tbody tr { cursor: pointer; }
+.rq-table tbody tr:hover,
+.rq-table tbody tr.is-open { background: var(--grayscale-50); }
+.rq-table__check { text-align: center !important; }
+.rq-table__check .axo-choice { vertical-align: middle; }
+.rq-table__open { text-align: center !important; }
+/* Request ID: the copy button eases in from the left while the cell is hovered (or it has
+   keyboard focus) and eases back out to the left. Copying swaps the ID for "Copied" briefly. */
+.rq-id { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; }
+.rq-id__labels { display: inline-grid; }
+.rq-id__labels > span { grid-area: 1 / 1; text-align: center; }
+.rq-id__labels > .is-hidden { visibility: hidden; }
+.rq-id__copy {
+  display: inline-flex;
+  padding: 2px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--grayscale-400);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.rq-table__id:hover .rq-id__copy,
+.rq-id__copy:focus-visible { opacity: 1; transform: none; }
+.rq-id__copy:hover { color: var(--grayscale-700); }
+.rq-id__copy:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+/* Touch screens have no hover, so the button just stays visible there */
+@media (hover: none) {
+  .rq-id__copy { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rq-id__copy { transform: none; }
+}
+.rq-table__open button {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--grayscale-400);
+  cursor: pointer;
+}
+.rq-table__open button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.rq-table__empty td { height: 96px; text-align: center; font-weight: 400; color: var(--grayscale-500); cursor: default; }
+.rq-table__empty:hover { background: none !important; }
+
+.rq-person { display: inline-flex; align-items: center; gap: var(--space-xs); font-weight: 500; color: var(--grayscale-800); }
+.rq-approvers { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.rq-approvers__icon { color: var(--primary-base); }
+
+/* Detail panel: docked 24px from the right and bottom, under the 72px top bar plus 4px */
+.rq__panel-dock { position: fixed; z-index: 40; top: 76px; right: 24px; bottom: 24px; display: flex; align-items: flex-start; }
+.rq__panel-dock .axo-panel { height: 100%; }
+/* It slides in from the right edge when it opens and back out to the right when it closes.
+   The dock moves, not the panel, so switching rows swaps the content without sliding again. */
+.rq__panel-dock { animation: rq-panel-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.rq__panel-dock.is-leaving { animation: rq-panel-out 0.26s cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
+@keyframes rq-panel-in { from { transform: translateX(calc(100% + 24px)); } to { transform: none; } }
+@keyframes rq-panel-out { from { transform: none; } to { transform: translateX(calc(100% + 24px)); } }
+@media (prefers-reduced-motion: reduce) {
+  .rq__panel-dock,
+  .rq__panel-dock.is-leaving { animation-duration: 1ms; }
+}
+.rq-panel__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 100px;
+  background: var(--white);
+  color: var(--grayscale-400);
+  cursor: pointer;
+}
+.rq-panel__more:hover { background: var(--grayscale-50); }
+.rq-panel__more:focus-visible,
+.rq-panel__copy:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.rq-panel__title { display: flex; flex-direction: column; gap: 12px; padding: 20px 32px; }
+.rq-panel__title h2 { margin: 0; font: 500 24px/1.2 var(--font-sans); letter-spacing: var(--tracking); color: var(--grayscale-800); }
+.rq-panel__meta { display: flex; align-items: flex-end; justify-content: space-between; }
+.rq-panel__id { display: inline-flex; align-items: center; gap: var(--space-s); }
+.rq-panel__copy { display: inline-flex; padding: 0; border: 0; border-radius: 4px; background: none; color: var(--grayscale-400); cursor: pointer; }
+.rq-panel__copied { font: 400 12px/var(--leading) var(--font-sans); color: var(--grayscale-500); }
+
+
+.rq-note { margin: 0; }
+.rq-note strong { font-weight: 500; }
+.rq-note--warning { color: var(--warning-600); }
+.rq-note--danger { color: var(--danger-600); }
+
+@media (max-width: 600px) {
+  .rq__panel-dock { top: 16px; right: 16px; bottom: 16px; left: 16px; }
+  .rq__panel-dock .axo-panel { width: 100%; }
+  .rq__title { font-size: 34px; line-height: 34px; }
+}

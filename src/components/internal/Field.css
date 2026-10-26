@@ -1,0 +1,69 @@
+.axo-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+  max-width: 400px;
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking);
+}
+.axo-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: var(--leading);
+  color: var(--grayscale-800);
+}
+.axo-field__info { display: inline-flex; color: var(--grayscale-400); }
+.axo-field__info .axo-icon { width: 16px; height: 16px; }
+
+.axo-field__box {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0 var(--space-m);
+  border: 1px solid var(--grayscale-150);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+}
+.axo-field__box--input { height: 44px; }
+.axo-field__box--area { height: 90px; align-items: flex-start; padding-block: 12px; }
+
+/* States, in Figma order: Hover, Filled, Active (focus), Negative, Disabled */
+.axo-field__box:hover { border-color: var(--grayscale-200); }
+.axo-field__box.is-filled { border-width: 1.5px; border-color: var(--grayscale-150); }
+.axo-field__box:focus-within { border-width: 1.5px; border-color: var(--grayscale-900); }
+.axo-field--negative .axo-field__box { border-width: 1.5px; border-color: var(--input-negative); }
+.axo-field--disabled .axo-field__box { border-width: 1.5px; border-color: var(--grayscale-150); }
+
+.axo-field__control {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  resize: none;
+  font: 400 14px/var(--leading) var(--font-sans);
+  letter-spacing: var(--tracking);
+  color: var(--grayscale-800);
+}
+.axo-field__box--area .axo-field__control { height: 100%; }
+.axo-field__control::placeholder { color: var(--grayscale-400); opacity: 1; }
+/* Placeholder text in button-style fields (dropdowns, dates), matching the native ::placeholder */
+.axo-field__placeholder { color: var(--grayscale-400) !important; font-weight: 400; }
+.axo-field__control:disabled { color: var(--grayscale-400); cursor: not-allowed; }
+.axo-field__box > .axo-icon { width: 16px; height: 16px; color: var(--grayscale-700); }
+
+.axo-field__feedback {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: var(--leading);
+  color: var(--grayscale-400);
+}

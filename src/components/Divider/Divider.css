@@ -1,0 +1,8 @@
+.axo-divider {
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: repeating-linear-gradient(to right, var(--grayscale-150) 0 5px, transparent 5px 10px);
+  opacity: 0.5;
+}
