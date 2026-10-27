@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
-  Avatar, Badge, Button, DetailList, Divider, Icon, PanelSection, SidePanel, Timeline,
+  Avatar, Button, DetailList, Divider, Icon, PanelSection, SHEET_LEAVE_MS, SidePanel, Timeline,
   type TimelineItem,
 } from "../../components";
 import { CURRENT_USER_ID, applicationById, personById } from "../../data/directory";
@@ -9,13 +9,18 @@ import {
 } from "../../data/requests";
 import { personValue } from "../../shared/personValue";
 import { ReasonQuote } from "../../shared/ReasonQuote";
+import { RejectSheet } from "./RejectSheet";
+import { RequestId } from "./RequestId";
 import { StatusBadge } from "./StatusBadge";
 
 interface Props {
   request: AccessRequest;
   onClose: () => void;
-  /** Records your decision. Approve and Reject show only while the request is waiting on you. */
-  onDecide: (decision: "approved" | "rejected") => void;
+  /**
+   * Records your decision. Approve and Reject show only while the request is waiting on you;
+   * Reject asks you to confirm and give a reason first.
+   */
+  onDecide: (decision: "approved" | "rejected", reason?: string) => void;
 }
 
 function PersonLine({ id }: { id: string }) {
@@ -31,22 +36,13 @@ function PersonLine({ id }: { id: string }) {
 
 /** The request details panel from the Approve Request flow. */
 export function RequestDetailPanel({ request: r, onClose, onDecide }: Props) {
-  const [copied, setCopied] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+  const rejectRef = useRef<HTMLButtonElement>(null);
   const app = applicationById(r.applicationId);
   const beneficiary = personById(r.beneficiaryId);
   const status = statusOf(r);
   const canDecide = pendingApproval(r)?.personId === CURRENT_USER_ID;
   const levelName = (id: string | null) => app.levels.find((l) => l.id === id)?.name ?? "None";
-
-  function copyId() {
-    navigator.clipboard?.writeText(r.id).then(
-      () => {
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1500);
-      },
-      () => setCopied(false),
-    );
-  }
 
   // Approval flow: one item per approver, then provisioning.
   let reached = false;
@@ -63,6 +59,20 @@ export function RequestDetailPanel({ request: r, onClose, onDecide }: Props) {
     } else if (a.status === "rejected") {
       itemStatus = "failed";
       note = <span className="rq-note--danger">Rejected as {a.role}.</span>;
+      if (a.comment) {
+        return {
+          id: `${a.role}`,
+          status: itemStatus,
+          caption: formatTimestamp(when),
+          children: (
+            <>
+              <PersonLine id={a.personId} />
+              <p className="rq-note">{note}</p>
+              <ReasonQuote reason={a.comment} />
+            </>
+          ),
+        };
+      }
     } else {
       itemStatus = !reached && status === "pending" ? "current" : "pending";
       reached = true;
@@ -127,10 +137,27 @@ export function RequestDetailPanel({ request: r, onClose, onDecide }: Props) {
           </button>
         </>
       }
+      overlay={
+        <RejectSheet
+          open={rejecting}
+          beneficiaryName={beneficiary.name}
+          levelName={levelName(r.requestedLevelId)}
+          applicationName={app.name}
+          onCancel={() => {
+            setRejecting(false);
+            rejectRef.current?.focus();
+          }}
+          onReject={(reason) => {
+            setRejecting(false);
+            // Record it once the sheet has gone, so the approval flow's change plays in view
+            window.setTimeout(() => onDecide("rejected", reason), SHEET_LEAVE_MS);
+          }}
+        />
+      }
       footer={
         canDecide ? (
           <>
-            <Button variant="destructive-outline" onClick={() => onDecide("rejected")}>Reject</Button>
+            <Button ref={rejectRef} variant="destructive-outline" onClick={() => setRejecting(true)}>Reject</Button>
             <Button onClick={() => onDecide("approved")}>Approve</Button>
           </>
         ) : (
@@ -141,13 +168,7 @@ export function RequestDetailPanel({ request: r, onClose, onDecide }: Props) {
       <div className="rq-panel__title">
         <h2>{beneficiary.name}</h2>
         <div className="rq-panel__meta">
-          <span className="rq-panel__id">
-            <Badge shape="tag">{r.id}</Badge>
-            <button type="button" className="rq-panel__copy" onClick={copyId} aria-label={`Copy ${r.id}`}>
-              <Icon name="copy" size={20} />
-            </button>
-            <span className="rq-panel__copied" role="status">{copied ? "Copied" : ""}</span>
-          </span>
+          <RequestId id={r.id} />
           <StatusBadge status={status} />
         </div>
       </div>

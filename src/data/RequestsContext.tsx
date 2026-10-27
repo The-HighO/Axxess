@@ -16,8 +16,8 @@ interface RequestsStore {
   requests: AccessRequest[];
   /** Submits a request as the current user and returns its id. */
   add: (input: NewRequest) => string;
-  /** Records the current user's decision on their pending approval. */
-  decide: (id: string, decision: "approved" | "rejected") => void;
+  /** Records the current user's decision on their pending approval, with their reason when rejecting. */
+  decide: (id: string, decision: "approved" | "rejected", comment?: string) => void;
 }
 
 const Ctx = createContext<RequestsStore | null>(null);
@@ -42,14 +42,14 @@ export function RequestsProvider({ children }: { children: ReactNode }) {
         setRequests((list) => [request, ...list]);
         return id;
       },
-      decide(id, decision) {
+      decide(id, decision, comment) {
         const now = new Date().toISOString();
         setRequests((list) =>
           list.map((r) => {
             if (r.id !== id) return r;
             const i = r.approvals.findIndex((a) => a.status === "pending");
             if (i < 0 || r.approvals[i].personId !== CURRENT_USER_ID) return r;
-            const approvals = r.approvals.map((a, j) => (j === i ? { ...a, status: decision, decidedAt: now } : a));
+            const approvals = r.approvals.map((a, j) => (j === i ? { ...a, status: decision, decidedAt: now, ...(comment ? { comment } : {}) } : a));
             return { ...r, approvals };
           }),
         );

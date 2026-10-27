@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Avatar, Badge, Button, Checkbox, DateFilter, FilterMenu, inRange, Icon, Pagination, SearchField, Tab, useToast,
+  Avatar, Button, Checkbox, DateFilter, FilterMenu, inRange, Icon, Pagination, SearchField, Tab, useToast,
   type DateFilterValue,
 } from "../../components";
 import { CURRENT_USER_ID, applicationById, applications, people, personById } from "../../data/directory";
@@ -8,6 +8,7 @@ import { approvedCount, formatLongDate, statusOf, type AccessRequest, type Reque
 import { useRequests } from "../../data/RequestsContext";
 import { AppShell } from "../../shell/AppShell";
 import { RequestDetailPanel } from "./RequestDetailPanel";
+import { RequestId } from "./RequestId";
 import { StatusBadge } from "./StatusBadge";
 import "./RequestsPage.css";
 
@@ -39,46 +40,6 @@ function ApproversCell({ request }: { request: AccessRequest }) {
     <span className="rq-approvers">
       <Icon name={icon} size={20} className="rq-approvers__icon" />
       {done} of {total}
-    </span>
-  );
-}
-
-/**
- * Request ID with a copy button that slides in on hover (or keyboard focus). Copying swaps
- * the ID for "Copied" for a moment; both labels share one grid cell so the tag never changes width.
- */
-function IdCell({ id, onCopied }: { id: string; onCopied: (id: string) => void }) {
-  const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    if (!copied) return;
-    const timer = window.setTimeout(() => setCopied(false), 1500);
-    return () => window.clearTimeout(timer);
-  }, [copied]);
-  return (
-    <span className="rq-id">
-      <Badge shape="tag">
-        <span className="rq-id__labels">
-          <span className={copied ? "is-hidden" : undefined}>{id}</span>
-          <span className={copied ? undefined : "is-hidden"} aria-hidden={!copied}>Copied</span>
-        </span>
-      </Badge>
-      <button
-        type="button"
-        className="rq-id__copy"
-        aria-label={`Copy ${id}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          navigator.clipboard?.writeText(id).then(
-            () => {
-              setCopied(true);
-              onCopied(id);
-            },
-            () => setCopied(false),
-          );
-        }}
-      >
-        <Icon name="copy" size={16} />
-      </button>
     </span>
   );
 }
@@ -176,14 +137,17 @@ export function RequestsPage({ initialOpenId = null }: Props) {
     window.requestAnimationFrame(() => document.getElementById(`open-${id}`)?.focus());
   }
 
-  function decideRequest(r: AccessRequest, decision: "approved" | "rejected") {
-    decide(r.id, decision);
+  function decideRequest(r: AccessRequest, decision: "approved" | "rejected", reason?: string) {
+    decide(r.id, decision, reason);
     const verb = decision === "approved" ? "approved" : "rejected";
     setAnnouncement(`${r.id} ${verb}.`);
     // An approval with approvers still to go hands the request on rather than finishing it.
     const subject = `${personById(r.beneficiaryId).name}’s ${applicationById(r.applicationId).name} request ${r.id}`;
     const mine = r.approvals.findIndex((a) => a.status === "pending");
     const next = decision === "approved" ? r.approvals.slice(mine + 1).find((a) => a.status === "pending") : undefined;
+    // A rejection, or the last approval, finishes the request and it leaves "Awaiting approval":
+    // follow it to "All requests" so it stays in view
+    if (!next && tab === "awaiting") setTab("all");
     toast.show({
       type: "success",
       title: `Request ${verb}`,
@@ -284,7 +248,7 @@ export function RequestsPage({ initialOpenId = null }: Props) {
                       <td className="rq-table__check" onClick={(e) => e.stopPropagation()}>
                         <Checkbox variant="table" aria-label={`Select ${r.id}`} checked={selected.has(r.id)} onChange={() => toggleRow(r.id)} />
                       </td>
-                      <td className="rq-table__id"><IdCell id={r.id} onCopied={(id) => setAnnouncement(`${id} copied.`)} /></td>
+                      <td className="rq-table__id"><RequestId id={r.id} onCopied={(id) => setAnnouncement(`${id} copied.`)} /></td>
                       <td>
                         <span className="rq-person rq-person--lg">
                           <Avatar size={30} name={beneficiary.name} color={beneficiary.color} />
@@ -332,7 +296,7 @@ export function RequestsPage({ initialOpenId = null }: Props) {
             key={open.id}
             request={open}
             onClose={closePanel}
-            onDecide={(decision) => decideRequest(open, decision)}
+            onDecide={(decision, reason) => decideRequest(open, decision, reason)}
           />
         </div>
       )}

@@ -19,6 +19,8 @@
   --supporting-success-500: #5cb85c; /* Supporting/Success/green-500: toast success icon */
   --warning-500: #ea961c;
   --warning-600: #c37d17;   /* pending text and timeline line */
+  --danger-50: #fef2f2;     /* light end of the same red scale as danger-500 (not a Figma variable) */
+  --danger-100: #fee2e2;    /* reject confirmation icon background */
   --danger-500: #dc2626;
   --danger-600: #c82323;
   --input-negative: #de0028; /* raw value in Figma, not a variable */

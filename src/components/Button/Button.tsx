@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../internal/cx";
 import { renderIcon, type IconName } from "../Icon";
 import "./Button.css";
@@ -14,7 +14,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconPosition?: "leading" | "trailing" | "only";
 }
 
-export function Button({
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({
   variant = "primary",
   size = "large",
   icon,
@@ -23,11 +23,12 @@ export function Button({
   className,
   children,
   ...rest
-}: ButtonProps) {
+}, ref) {
   const iconNode = icon ? renderIcon(icon) : null;
   const iconOnly = Boolean(iconNode) && iconPosition === "only";
   return (
     <button
+      ref={ref}
       type={type}
       className={cx(
         "axo-btn",
@@ -43,4 +44,4 @@ export function Button({
       {iconPosition === "trailing" && iconNode}
     </button>
   );
-}
+});

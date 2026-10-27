@@ -12,8 +12,10 @@ export interface Approval {
   status: ApprovalStatus;
   /** ISO time the decision was made. */
   decidedAt?: string;
-  /** Set when the requester is the approver, so the step was satisfied on submission. */
+  /** Set when the requester is the first approver, so the step was satisfied on submission. */
   auto?: boolean;
+  /** Why the approver rejected the request. */
+  comment?: string;
 }
 
 export interface AccessRequest {
@@ -33,6 +35,7 @@ export interface AccessRequest {
   approvals: Approval[];
 }
 
+/** Rejected as soon as any approver rejects it; approved once every approver has approved. */
 export function statusOf(r: AccessRequest): RequestStatus {
   if (r.approvals.some((a) => a.status === "rejected")) return "rejected";
   if (r.approvals.every((a) => a.status === "approved")) return "approved";
@@ -45,14 +48,23 @@ export const approvedCount = (r: AccessRequest) => r.approvals.filter((a) => a.s
 export const pendingApproval = (r: AccessRequest) =>
   statusOf(r) === "pending" ? r.approvals.find((a) => a.status === "pending") ?? null : null;
 
-/** Builds the approval chain for a new request: the app owner, then the access administrator. */
+/**
+ * Builds the approval chain for a new request: the app owner, then the access administrator.
+ * If the requester is first in the chain, their step is approved on submission and the request
+ * moves straight on to the next approver (and so on, while the requester is next in line).
+ * Later in the chain, the requester approves like anyone else.
+ */
 export function approvalsFor(applicationId: string, requesterId: string, at: string): Approval[] {
   const app = applicationById(applicationId);
   const chain: Approval[] = [
     { role: "Application Owner", personId: app.ownerId, status: "pending" },
     { role: "Access Administrator", personId: app.administratorId, status: "pending" },
   ];
-  return chain.map((a) => (a.personId === requesterId ? { ...a, status: "approved", decidedAt: at, auto: true } : a));
+  let leading = true;
+  return chain.map((a) => {
+    leading = leading && a.personId === requesterId;
+    return leading ? { ...a, status: "approved", decidedAt: at, auto: true } : a;
+  });
 }
 
 function seed(
@@ -85,7 +97,7 @@ export const seedRequests: AccessRequest[] = [
     [{ status: "approved", decidedAt: "2026-09-10T15:01:00" }, { status: "approved", decidedAt: "2026-09-11T09:30:00" }]),
   seed("REQ-0796", "brandon", "brandon", "datadog", "editor", "2026-09-04T10:05:00",
     "I want to build a dashboard for demo environment uptime.", "none",
-    [{ status: "rejected", decidedAt: "2026-09-05T09:40:00" }]),
+    [{ status: "rejected", decidedAt: "2026-09-05T09:40:00", comment: "Uptime dashboards for the demo environment already exist in the shared Sales folder." }]),
 ];
 
 /* ---------- Formatting ---------- */
