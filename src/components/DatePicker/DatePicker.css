@@ -25,11 +25,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0;
+  /* Its own layer, so the hover pills below can sit behind the text but in front of the header */
+  isolation: isolate;
   font: 500 14px/var(--leading) var(--font-sans);
   color: var(--grayscale-800);
 }
 /* Month and year: a roomy hover pill, 10px at the sides and 4px top and bottom. */
 .axo-calendar__title-btn {
+  position: relative;
   padding: 4px 10px;
   margin: 0;
   border: 0;
@@ -39,11 +42,18 @@
   color: inherit;
   cursor: pointer;
 }
-.axo-calendar__title-btn:hover { background: var(--grayscale-100); }
+/* The pill is drawn behind both labels, so where the two buttons overlap it never covers
+   the other word (the month's pill used to hide the start of the year). */
+.axo-calendar__title-btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+}
+.axo-calendar__title-btn:hover::before { background: var(--grayscale-100); }
 /* Pull the year back towards the month so the text still reads "Apr, 2027" with a normal space. */
-/* The month sits on top where the two overlap, so the comma always belongs to the month. */
 .axo-calendar__title-btn + .axo-calendar__title-btn { margin-left: -12px; }
-.axo-calendar__title-btn:first-child { position: relative; z-index: 1; }
 .axo-calendar__back {
   display: inline-flex;
   align-items: center;

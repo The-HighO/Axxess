@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { cx } from "../internal/cx";
 import { DATE_RANGE_PICKER_HEIGHT, DateRangePicker, type DateRange } from "../DateRangePicker";
 import { useFloatingPanel } from "../internal/useFloatingPanel";
+import { usePresence } from "../internal/usePresence";
+import "../internal/Popover.css";
 import { FilterMenu } from "./FilterMenu";
 import "../DateInput/DateInput.css";
 import "./Filter.css";
@@ -91,8 +93,9 @@ export function DateFilter({ label = "Date", value, onChange, className }: DateF
     anchorRef.current?.querySelector<HTMLElement>("[aria-haspopup]")?.focus();
   };
 
+  const { present, leaving } = usePresence(open);
   const place = useFloatingPanel({
-    open,
+    open: present,
     anchorRef,
     rootRef,
     onDismiss: () => setOpen(false),
@@ -133,10 +136,10 @@ export function DateFilter({ label = "Date", value, onChange, className }: DateF
           onChange={choose}
         />
       </span>
-      {open && (
+      {present && (
         <div
           ref={panelRef}
-          className="axo-date__panel"
+          className={cx("axo-date__panel", "axo-pop", place.above && "is-above", leaving && "is-leaving")}
           role="dialog"
           aria-label={`${label}: choose a range`}
           style={{ top: place.top, left, width: PANEL_WIDTH }}

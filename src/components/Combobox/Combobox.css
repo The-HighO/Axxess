@@ -26,6 +26,7 @@
   background: var(--white);
   box-shadow: var(--shadow-card-large);
 }
+/* Open and close motion: .axo-pop (internal/Popover.css) */
 .axo-combobox__search {
   box-sizing: border-box;
   display: block;

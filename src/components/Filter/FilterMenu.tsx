@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { cx } from "../internal/cx";
 import { Icon } from "../Icon";
 import { Menu } from "../Menu";
@@ -42,13 +43,16 @@ export function FilterMenu({ label, options, value, onChange, valueLabel, classN
       }
     />
   );
-  if (!selected) return menu;
+  // One wrapper whether or not a value is set, with the menu keyed, so choosing the first
+  // value doesn't rebuild the menu (it would vanish instead of fading out).
   return (
-    <span className={cx("axo-filter", "axo-filter--active", className)}>
-      <button type="button" className="axo-filter__clear" onClick={() => onChange(null)} aria-label={`Clear ${label} filter`}>
-        <Icon name="crossed-small" />
-      </button>
-      {menu}
+    <span className={selected ? cx("axo-filter", "axo-filter--active", className) : "axo-filter-wrap"}>
+      {selected && (
+        <button key="clear" type="button" className="axo-filter__clear" onClick={() => onChange(null)} aria-label={`Clear ${label} filter`}>
+          <Icon name="crossed-small" />
+        </button>
+      )}
+      <Fragment key="menu">{menu}</Fragment>
     </span>
   );
 }

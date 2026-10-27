@@ -3,6 +3,8 @@ import { cx } from "../internal/cx";
 import { Icon } from "../Icon";
 import { ScrollThumb } from "../internal/ScrollThumb";
 import { useFloatingPanel } from "../internal/useFloatingPanel";
+import { usePresence } from "../internal/usePresence";
+import "../internal/Popover.css";
 import { placeholderFor } from "../internal/placeholder";
 import "../internal/Field.css";
 import "./Combobox.css";
@@ -43,6 +45,12 @@ export function Combobox({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  // Whether `active` is shown highlighted: only once the arrow keys, a hover or a search
+  // has picked something, so nothing looks hovered the moment the list opens.
+  const [highlight, setHighlight] = useState(false);
+  // The panel stays in the page for its fade-out after closing.
+  // The panel stays in the page for its fade-out after closing.
+  const { present, leaving } = usePresence(open);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -50,8 +58,9 @@ export function Combobox({
   const popoverRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   // Floats under the field, ends 24px above the screen bottom, and keeps scrolling inside the list.
+  // It stays placed through the fade-out too, so the page doesn't shift under the closing list.
   const float = useFloatingPanel({
-    open,
+    open: present,
     anchorRef,
     rootRef,
     onDismiss: () => setOpen(false),
@@ -75,7 +84,11 @@ export function Combobox({
     if (open) searchRef.current?.focus({ preventScroll: true });
   }, [open]);
 
-  useEffect(() => setActive(0), [query]);
+  useEffect(() => {
+    setActive(0);
+    setHighlight(query.trim() !== "");
+  }, [query]);
+
 
   // Keep the keyboard-highlighted option in view inside the list.
   useEffect(() => {
@@ -91,6 +104,7 @@ export function Combobox({
   function openList() {
     setQuery("");
     setActive(Math.max(0, filtered.findIndex((o) => o.value === value)));
+    setHighlight(false);
     setOpen(true);
   }
 
@@ -103,13 +117,16 @@ export function Combobox({
   function onSearchKey(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((i) => Math.min(i + 1, filtered.length - 1));
+      // The first press lights up the current option rather than skipping past it.
+      if (highlight) setActive((i) => Math.min(i + 1, filtered.length - 1));
+      setHighlight(true);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((i) => Math.max(i - 1, 0));
+      if (highlight) setActive((i) => Math.max(i - 1, 0));
+      setHighlight(true);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (filtered[active]) choose(filtered[active]);
+      if (highlight && filtered[active]) choose(filtered[active]);
     } else if (e.key === "Escape") {
       e.preventDefault();
       setOpen(false);
@@ -132,8 +149,11 @@ export function Combobox({
         id={optionId(i)}
         role="option"
         aria-selected={option.value === value}
-        className={cx("axo-combobox__option", i === active && "is-active", option.description && "has-description")}
-        onMouseEnter={() => setActive(i)}
+        className={cx("axo-combobox__option", highlight && i === active && "is-active", option.description && "has-description")}
+        onMouseEnter={() => {
+          setActive(i);
+          setHighlight(true);
+        }}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => choose(option)}
       >
@@ -174,10 +194,10 @@ export function Combobox({
           )}
           <Icon name="chevron-bottom" size={16} />
         </button>
-        {open && (
+        {present && (
           <div
             ref={popoverRef}
-            className="axo-combobox__popover"
+            className={cx("axo-combobox__popover", "axo-pop", float.above && "is-above", leaving && "is-leaving")}
             style={{ top: float.top, left: float.left, width: float.width }}
           >
             <input
@@ -188,7 +208,7 @@ export function Combobox({
               aria-label={searchPlaceholder}
               aria-expanded="true"
               aria-controls={`${id}-list`}
-              aria-activedescendant={filtered[active] ? optionId(active) : undefined}
+              aria-activedescendant={highlight && filtered[active] ? optionId(active) : undefined}
               aria-autocomplete="list"
               placeholder={searchPlaceholder}
               value={query}
@@ -203,6 +223,7 @@ export function Combobox({
                 id={`${id}-list`}
                 role="listbox"
                 aria-label={typeof label === "string" ? label : undefined}
+                onMouseLeave={() => setHighlight(false)}
               >
                 {rows.length ? rows : <li className="axo-combobox__empty" role="presentation">{emptyText}</li>}
               </ul>

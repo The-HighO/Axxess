@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "../internal/cx";
+import { usePresence } from "../internal/usePresence";
+import "../internal/Popover.css";
 import "./Menu.css";
 
 export interface MenuItem {
@@ -38,6 +40,10 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
   const id = useId();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  // Show `active` highlighted only once the keyboard or a hover has picked it, so nothing
+  // looks hovered when the menu opens from a click.
+  const [highlight, setHighlight] = useState(false);
+  const { present, leaving } = usePresence(open);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -53,7 +59,8 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
     return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
-  function show(at: "first" | "last" = "first") {
+  function show(at: "first" | "last" = "first", fromKeyboard = false) {
+    setHighlight(fromKeyboard);
     const sel = items.findIndex((it) => it.selected && !it.disabled);
     setActive(sel >= 0 ? sel : at === "first" ? enabled[0] ?? 0 : enabled[enabled.length - 1] ?? 0);
     setOpen(true);
@@ -73,11 +80,12 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
     if (next != null) setActive(next);
   }
   function onListKey(e: KeyboardEvent<HTMLUListElement>) {
-    if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
-    else if (e.key === "Home") { e.preventDefault(); setActive(enabled[0]); }
-    else if (e.key === "End") { e.preventDefault(); setActive(enabled[enabled.length - 1]); }
-    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (items[active]) choose(items[active]); }
+    // The first arrow press lights up the current item rather than skipping past it.
+    if (e.key === "ArrowDown") { e.preventDefault(); if (highlight) move(1); setHighlight(true); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); if (highlight) move(-1); setHighlight(true); }
+    else if (e.key === "Home") { e.preventDefault(); setActive(enabled[0]); setHighlight(true); }
+    else if (e.key === "End") { e.preventDefault(); setActive(enabled[enabled.length - 1]); setHighlight(true); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (highlight && items[active]) choose(items[active]); }
     else if (e.key === "Escape") { e.preventDefault(); close(); }
     else if (e.key === "Tab") { close(false); }
   }
@@ -90,22 +98,22 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
         onKeyDown: (e) => {
           if (!open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
             e.preventDefault();
-            show(e.key === "ArrowUp" ? "last" : "first");
+            show(e.key === "ArrowUp" ? "last" : "first", true);
           }
         },
         "aria-haspopup": "menu",
         "aria-expanded": open,
         "aria-controls": `${id}-menu`,
       })}
-      {open && (
+      {present && (
         <ul
           ref={listRef}
           id={`${id}-menu`}
           role="menu"
           aria-label={label}
           tabIndex={-1}
-          aria-activedescendant={`${id}-item-${active}`}
-          className={cx("axo-menu__list", align === "end" && "axo-menu__list--end")}
+          aria-activedescendant={highlight ? `${id}-item-${active}` : undefined}
+          className={cx("axo-menu__list", "axo-pop", align === "end" && "axo-menu__list--end is-end", leaving && "is-leaving")}
           style={{ minWidth }}
           onKeyDown={onListKey}
         >
@@ -117,12 +125,16 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
               aria-disabled={item.disabled || undefined}
               className={cx(
                 "axo-menu__item",
-                i === active && "is-active",
+                highlight && i === active && "is-active",
                 item.selected && "is-selected",
                 item.disabled && "is-disabled",
                 item.tone === "danger" && "is-danger",
               )}
-              onMouseEnter={() => !item.disabled && setActive(i)}
+              onMouseEnter={() => {
+                if (item.disabled) return;
+                setActive(i);
+                setHighlight(true);
+              }}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => choose(item)}
             >

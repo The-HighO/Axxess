@@ -3,6 +3,8 @@ import { cx } from "../internal/cx";
 import { Icon } from "../Icon";
 import { DATE_PICKER_HEIGHT, DatePicker } from "../DatePicker";
 import { useFloatingPanel } from "../internal/useFloatingPanel";
+import { usePresence } from "../internal/usePresence";
+import "../internal/Popover.css";
 import { placeholderFor } from "../internal/placeholder";
 import "../internal/Field.css";
 import "./DateInput.css";
@@ -46,8 +48,10 @@ export function DateInput({ label, value, onChange, min, max, placeholder, scree
     if (refocus) triggerRef.current?.focus();
   };
 
+  // Stays in the page for its fade-out, placed where it was, so nothing shifts under it.
+  const { present, leaving } = usePresence(open);
   const place = useFloatingPanel({
-    open,
+    open: present,
     anchorRef,
     rootRef,
     onDismiss: () => close(false),
@@ -86,10 +90,10 @@ export function DateInput({ label, value, onChange, min, max, placeholder, scree
           <Icon name="calendar" size={16} />
         </button>
       </div>
-      {open && (
+      {present && (
         <div
           ref={panelRef}
-          className="axo-date__panel"
+          className={cx("axo-date__panel", "axo-pop", place.above && "is-above", leaving && "is-leaving")}
           role="dialog"
           aria-label={typeof label === "string" ? label : "Choose a date"}
           style={{ top: place.top, left: place.left, width: place.width }}

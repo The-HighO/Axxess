@@ -54,3 +54,6 @@
 /* Date filter: the chip plus its floating range picker */
 .axo-date-filter,
 .axo-date-filter__anchor { display: inline-flex; }
+
+/* An empty FilterMenu's wrapper: the chip inside carries all the styling */
+.axo-filter-wrap { display: inline-flex; }

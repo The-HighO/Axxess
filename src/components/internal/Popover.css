@@ -1,0 +1,25 @@
+/* Shared motion for floating panels (dropdowns, calendars, menus). Add .axo-pop to the panel;
+   .is-above when it opens above its trigger, .is-end when it lines up with the trigger's right
+   edge, .is-leaving while it closes (see usePresence).
+   Opening: a soft settle. It fades in quickly (180ms) while it drifts 6px towards the trigger and
+   grows from 97% over a longer, gently decelerating 300ms, so it glides into place without
+   dragging. Closing: a plain 120ms fade with no movement, so it simply goes. */
+.axo-pop {
+  transform-origin: top center;
+  animation:
+    axo-pop-fade 180ms cubic-bezier(0.33, 1, 0.68, 1),
+    axo-pop-rise 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.axo-pop.is-end { transform-origin: top right; }
+.axo-pop.is-above { transform-origin: bottom center; --pop-drift: 6px; }
+.axo-pop.is-leaving {
+  pointer-events: none;
+  animation: axo-pop-out 120ms cubic-bezier(0.33, 0, 0.67, 1) forwards;
+}
+@keyframes axo-pop-fade { from { opacity: 0; } }
+@keyframes axo-pop-rise { from { transform: translateY(var(--pop-drift, -6px)) scale(0.97); } }
+@keyframes axo-pop-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .axo-pop,
+  .axo-pop.is-leaving { animation-duration: 1ms; }
+}

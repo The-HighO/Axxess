@@ -1,6 +1,7 @@
-import { useId, type ReactNode } from "react";
+import { useId, useRef, type ReactNode, type MouseEvent } from "react";
 import { cx } from "../internal/cx";
 import { Icon } from "../Icon";
+import { Reveal } from "../internal/Reveal";
 import "../Radio/Radio.css";
 import "../Toggle/Toggle.css";
 import "./OptionCard.css";
@@ -17,6 +18,8 @@ interface BaseProps {
   active?: boolean;
   /** Has an answer: solid outline instead of dashed while not active. */
   filled?: boolean;
+  /** Ease the content open and closed (default). Pass false to switch it instantly. */
+  reveal?: boolean;
   className?: string;
 }
 
@@ -57,9 +60,21 @@ export type OptionCardProps = RadioCardProps | ToggleCardProps | CollapsibleCard
  */
 export function OptionCard(props: OptionCardProps) {
   const id = useId();
+  const reveal = props.reveal ?? true;
   const open = props.kind === "static" ? true : props.kind === "collapsible" ? props.open : props.checked;
   const active = props.active ?? open;
   const filled = props.filled;
+  const rootRef = useRef<HTMLDivElement>(null);
+  // A closed card opens from a click anywhere on it, not just its title and control. Once
+  // open, only the header closes it, so clicks around the content can't close it by accident.
+  const openable = props.kind !== "static" && !open;
+  function openFromCard(e: MouseEvent<HTMLDivElement>) {
+    if (!openable) return;
+    const head = rootRef.current?.querySelector<HTMLElement>(":scope > .axo-option-card__head");
+    const target = e.target as Element;
+    if (!head || head.contains(target) || target.closest(".axo-option-card__body")) return;
+    head.click();
+  }
   const showDescription = Boolean(props.description);
   const text = (
     <span className="axo-option-card__text">
@@ -116,12 +131,25 @@ export function OptionCard(props: OptionCardProps) {
   }
 
   return (
-    <div className={cx("axo-option-card", active && "is-active", filled && "is-filled", props.className)}>
+    <div
+      ref={rootRef}
+      className={cx("axo-option-card", active && "is-active", filled && "is-filled", reveal && "has-reveal", openable && "is-openable", props.className)}
+      onClick={openFromCard}
+    >
       {header}
-      {open && props.children != null && (
-        <div className="axo-option-card__body" id={`${id}-body`}>
-          {props.children}
-        </div>
+      {reveal ? (
+        <Reveal open={open && props.children != null}>
+          <div className="axo-option-card__body" id={`${id}-body`}>
+            {props.children}
+          </div>
+        </Reveal>
+      ) : (
+        open &&
+        props.children != null && (
+          <div className="axo-option-card__body" id={`${id}-body`}>
+            {props.children}
+          </div>
+        )
       )}
     </div>
   );

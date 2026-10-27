@@ -54,6 +54,8 @@ export function useFloatingPanel({
 
     const scroller = scrollParent(anchorRef.current);
     let restorePadding: string | null = null;
+    // Where the page is gliding to make room, while it's on its way (see below).
+    let target: number | null = null;
     const first = anchorRect();
     // Don't scroll the field (label included) up under a soft fade at the top of the scroll area
     // (`data-scroll-fade="28"` on the scroller) or a pinned title inside it (`data-scroll-cover="28"`).
@@ -65,7 +67,7 @@ export function useFloatingPanel({
     const fieldTop = rootRef.current?.getBoundingClientRect().top ?? first?.top ?? 0;
     const short = first ? Math.min(comfortable - room(first), Math.max(0, fieldTop - ceiling)) : 0;
     if (short > 0 && scroller) {
-      const target = scroller.scrollTop + short;
+      target = scroller.scrollTop + short;
       const maxScroll = () => scroller.scrollHeight - scroller.clientHeight;
       if (target > maxScroll()) {
         // Pad the end so it can scroll that far. Content shorter than the scroll area makes the
@@ -79,14 +81,22 @@ export function useFloatingPanel({
           scroller.style.paddingBottom = `${base + extra}px`;
         }
       }
-      scroller.scrollTop = target;
+      // Glide the page up rather than jumping, so it moves with the panel's own soft open.
+      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (smooth) scroller.scrollTo({ top: target, behavior: "smooth" });
+      else scroller.scrollTop = target;
     }
 
     const fit = () => {
       const rect = anchorRect();
       if (!rect) return;
-      const below = room(rect);
-      const aboveRoom = rect.top - gap - screenMargin - chrome;
+      // While the page is still gliding, decide where the panel goes from where the field will
+      // end up, so it doesn't open above and then flip below; its position follows the field.
+      const pending = target != null && scroller ? target - scroller.scrollTop : 0;
+      if (Math.abs(pending) < 1) target = null;
+      const settled = new DOMRect(rect.x, rect.y - pending, rect.width, rect.height);
+      const below = room(settled);
+      const aboveRoom = settled.top - gap - screenMargin - chrome;
       // (1px of slack: after scrolling to fit exactly, sub-pixel rounding can leave `below` a hair short)
       if (below >= minFlex - 1) {
         setPlace({ top: rect.bottom + gap, left: rect.left, width: rect.width, flexMax: Math.min(maxFlex, below), above: false });

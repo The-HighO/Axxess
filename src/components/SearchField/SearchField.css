@@ -25,7 +25,27 @@
   color: var(--grayscale-800);
 }
 .axo-search input::placeholder { color: var(--grayscale-500); opacity: 1; }
-.axo-search input::-webkit-search-cancel-button { cursor: pointer; }
+/* The browser's own clear button is replaced by .axo-search__clear (the DS crossed-small icon) */
+.axo-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+.axo-search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--grayscale-400);
+  cursor: pointer;
+}
+.axo-search__clear:hover { color: var(--grayscale-700); }
+.axo-search__clear:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+/* Active (focused or holding text): the ⌘K hint gives way */
+.axo-search:focus-within .axo-search__kbd,
+.axo-search.has-value .axo-search__kbd { display: none; }
 .axo-search__kbd {
   display: inline-flex;
   align-items: center;

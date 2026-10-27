@@ -67,8 +67,10 @@
 @media (prefers-reduced-motion: reduce) {
   .rq-id__copy { transform: none; }
 }
+/* A block centred in the cell, so the chevron sits on the row's centre line rather than the text baseline */
 .rq-table__open button {
-  display: inline-flex;
+  display: flex;
+  margin: 0 auto;
   padding: 0;
   border: 0;
   border-radius: 4px;
