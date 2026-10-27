@@ -3,8 +3,11 @@
 .ra {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
+  /* Pinned to the screen's edges rather than sized with 100dvh: Chrome's device mode can work
+     dvh out as 0 on a fresh load (blank page until the window is resized), and fixed edges
+     follow the visible screen in every browser, address bar included. */
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   background: var(--white);
 }
@@ -133,3 +136,21 @@
   .ra__heading { font-size: 34px; line-height: 34px; }
   .axo-page-header { padding-inline: 16px; }
 }
+
+/* Stage transition between every screen of the flow. The title and form leave together, quick and
+   accelerating, drifting 12px against the direction of travel; the next screen then
+   arrives from 16px the other side and settles with the system's soft landing.
+   --stage-dir is 1 going forward and -1 going back. */
+.ra__stage.is-leaving {
+  opacity: 0;
+  transform: translateX(calc(var(--stage-dir, 1) * -12px));
+  transition: opacity 140ms cubic-bezier(0.4, 0, 1, 1), transform 140ms cubic-bezier(0.4, 0, 1, 1);
+  pointer-events: none;
+}
+.ra__stage.is-entering {
+  animation:
+    ra-stage-fade 260ms cubic-bezier(0.33, 1, 0.68, 1) both,
+    ra-stage-slide 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes ra-stage-fade { from { opacity: 0; } }
+@keyframes ra-stage-slide { from { transform: translateX(calc(var(--stage-dir, 1) * 16px)); } }

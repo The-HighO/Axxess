@@ -2,8 +2,11 @@
    The window never scrolls: the sidebar and top bar stay fixed and only the content area scrolls. */
 .shell-app {
   display: flex;
-  height: 100vh;
-  height: 100dvh;
+  /* Pinned to the screen's edges rather than sized with 100dvh: Chrome's device mode can work
+     dvh out as 0 on a fresh load (blank page until the window is resized), and fixed edges
+     follow the visible screen in every browser, address bar included. */
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   background: var(--white);
 }

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ReactElement } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactElement } from "react";
 import { Button, PageHeader, ScrollThumb, Stepper } from "../../components";
+import { cx } from "../../components/internal/cx";
 import type { NewRequest } from "../../data/RequestsContext";
 import { useMediaQuery } from "../../shared/useMediaQuery";
 import { SCREENS, STEPS, canContinue, initialDraft, toNewRequest, type RequestDraft, type ScreenId } from "./state";
@@ -25,6 +26,10 @@ export interface RequestAccessFlowProps {
   onSubmit?: (request: NewRequest) => void;
 }
 
+/** How long the outgoing screen takes to leave (matches .ra__stage.is-leaving). */
+const STAGE_LEAVE_MS = 140;
+const STAGE_ENTER_MS = 360;
+
 /** The Request Access flow from the Figma file: six screens under a four-step stepper. */
 export function RequestAccessFlow({ onClose, onSubmit }: RequestAccessFlowProps) {
   const [draft, setDraft] = useState<RequestDraft>(initialDraft);
@@ -34,20 +39,53 @@ export function RequestAccessFlow({ onClose, onSubmit }: RequestAccessFlowProps)
   const headingRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const screen = SCREENS[index];
-  const view = SCREEN_VIEW[screen.id];
   const isReview = screen.id === "review";
+  // The screen on stage. It trails `index` through the stage transition: the old screen leaves,
+  // then the new one enters. The stepper follows `index` straight away.
+  const [shown, setShown] = useState(0);
+  const [phase, setPhase] = useState<"idle" | "leaving" | "entering">("idle");
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const stage = SCREENS[shown];
+  const view = SCREEN_VIEW[stage.id];
+
+  useEffect(() => {
+    if (index === shown) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setShown(index);
+      setPhase("idle");
+      return;
+    }
+    setDirection(index > shown ? 1 : -1);
+    setPhase("leaving");
+    const timer = window.setTimeout(() => {
+      setShown(index);
+      setPhase("entering");
+    }, STAGE_LEAVE_MS);
+    return () => window.clearTimeout(timer);
+  }, [index, shown]);
+
+  useEffect(() => {
+    if (phase !== "entering") return;
+    const timer = window.setTimeout(() => setPhase("idle"), STAGE_ENTER_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  // Title and form move together; --stage-dir sets which way (1 forward, -1 back).
+  const stageClass = cx("ra__stage", phase === "leaving" && "is-leaving", phase === "entering" && "is-entering");
+  const stageStyle = { "--stage-dir": direction } as CSSProperties;
   // Phones: a compact stepper, and the title scrolls with the content so the screen goes to the form.
   // Only the page header and stepper stay fixed.
   const phone = useMediaQuery("(max-width: 600px)");
   const heading = (
-    <h2 className="ra__heading" ref={headingRef} tabIndex={-1}>{view.heading}</h2>
+    <h2 key={`heading-${shown}`} className={cx("ra__heading", stageClass)} style={stageStyle} ref={headingRef} tabIndex={-1}>{view.heading}</h2>
   );
 
   // Move focus to the new heading so screen readers announce each screen.
   useEffect(() => {
     scrollRef.current?.scrollTo(0, 0);
     headingRef.current?.focus({ preventScroll: true });
-  }, [index]);
+  }, [shown]);
 
   const update = (patch: Partial<RequestDraft>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -110,14 +148,17 @@ export function RequestAccessFlow({ onClose, onSubmit }: RequestAccessFlowProps)
             <main className="ra__main">
               {phone && heading}
               <form
-                className="ra__form"
+                // Distinct from the heading's key: on phones they're siblings in <main>
+                key={`form-${shown}`}
+                className={cx("ra__form", stageClass)}
+                style={stageStyle}
                 onSubmit={(e) => {
                   e.preventDefault();
                   next();
                 }}
               >
                 <view.Body draft={draft} update={update} />
-                <Button type="submit" className="ra__continue" disabled={!canContinue(screen.id, draft)}>
+                <Button type="submit" className="ra__continue" disabled={!canContinue(stage.id, draft)}>
                   {isReview ? "Request access" : "Continue"}
                 </Button>
               </form>
