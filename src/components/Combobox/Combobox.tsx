@@ -61,6 +61,7 @@ export function Combobox({
   // It stays placed through the fade-out too, so the page doesn't shift under the closing list.
   const float = useFloatingPanel({
     open: present,
+    leaving,
     anchorRef,
     rootRef,
     onDismiss: () => setOpen(false),

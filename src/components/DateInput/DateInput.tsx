@@ -52,6 +52,7 @@ export function DateInput({ label, value, onChange, min, max, placeholder, scree
   const { present, leaving } = usePresence(open);
   const place = useFloatingPanel({
     open: present,
+    leaving,
     anchorRef,
     rootRef,
     onDismiss: () => close(false),

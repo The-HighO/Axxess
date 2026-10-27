@@ -96,6 +96,7 @@ export function DateFilter({ label = "Date", value, onChange, className }: DateF
   const { present, leaving } = usePresence(open);
   const place = useFloatingPanel({
     open: present,
+    leaving,
     anchorRef,
     rootRef,
     onDismiss: () => setOpen(false),
