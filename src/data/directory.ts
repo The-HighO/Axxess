@@ -76,7 +76,7 @@ const crmLevels: AccessLevel[] = [
   { id: "administrator", name: "Administrator", description: "Create and update customer records" },
 ];
 
-// Only Salesforce is specified in the designs; the other four are sample entries.
+// Only Salesforce is specified in the designs; the others are sample entries.
 export const applications: Application[] = [
   { id: "aws", name: "AWS", type: "Cloud infrastructure", risk: "High", provisioning: "Manual", ownerId: "kemi", administratorId: "jordan",
     levels: [{ id: "read-only", name: "Read only", description: "View resources and billing" }, { id: "developer", name: "Developer", description: "Deploy and manage services" }, { id: "administrator", name: "Administrator", description: "Full access to the account" }] },
@@ -84,9 +84,19 @@ export const applications: Application[] = [
     levels: [{ id: "viewer", name: "Viewer", description: "View dashboards and monitors" }, { id: "editor", name: "Editor", description: "Create dashboards and monitors" }] },
   { id: "figma", name: "Figma", type: "Design", risk: "Low", provisioning: "Automatic", ownerId: "chinedu", administratorId: "jordan",
     levels: [{ id: "viewer", name: "Viewer", description: "View and comment on files" }, { id: "editor", name: "Editor", description: "Create and edit files" }] },
+  { id: "github", name: "GitHub", type: "Source code", risk: "High", provisioning: "Automatic", ownerId: "kemi", administratorId: "jordan",
+    levels: [{ id: "read", name: "Read", description: "View and clone repositories" }, { id: "write", name: "Write", description: "Push code and open pull requests" }, { id: "maintainer", name: "Maintainer", description: "Manage repository settings and merges" }] },
+  { id: "greenhouse", name: "Greenhouse", type: "Recruiting", risk: "Medium", provisioning: "Manual", ownerId: "sade", administratorId: "jordan",
+    levels: [{ id: "interviewer", name: "Interviewer", description: "See assigned candidates and submit scorecards" }, { id: "hiring-manager", name: "Hiring manager", description: "Manage candidates for your own roles" }, { id: "recruiter", name: "Recruiter", description: "Manage all jobs, candidates and offers" }] },
   { id: "jira", name: "Jira", type: "Project management", risk: "Low", provisioning: "Automatic", ownerId: "kemi", administratorId: "jordan",
     levels: [{ id: "viewer", name: "Viewer", description: "View projects and issues" }, { id: "member", name: "Member", description: "Create and update issues" }] },
+  { id: "netsuite", name: "NetSuite", type: "Finance and accounting", risk: "High", provisioning: "Manual", ownerId: "fatima", administratorId: "jordan",
+    levels: [{ id: "viewer", name: "Viewer", description: "View reports and ledgers" }, { id: "accountant", name: "Accountant", description: "Record transactions and reconcile accounts" }, { id: "approver", name: "Approver", description: "Approve bills and payments" }] },
   { id: "salesforce", name: "Salesforce", type: "Customer relationship management", risk: "High", provisioning: "Automatic", ownerId: "chinedu", administratorId: "jordan", levels: crmLevels },
+  { id: "snowflake", name: "Snowflake", type: "Data warehouse", risk: "High", provisioning: "Manual", ownerId: "ibrahim", administratorId: "jordan",
+    levels: [{ id: "analyst", name: "Analyst", description: "Query shared datasets" }, { id: "engineer", name: "Engineer", description: "Build and manage pipelines and tables" }] },
+  { id: "zendesk", name: "Zendesk", type: "Customer support", risk: "Medium", provisioning: "Automatic", ownerId: "bola", administratorId: "jordan",
+    levels: [{ id: "light-agent", name: "Light agent", description: "View tickets and add internal notes" }, { id: "agent", name: "Agent", description: "Reply to and resolve tickets" }] },
 ];
 
 /** Access people already hold, keyed by `${personId}:${applicationId}`. */
