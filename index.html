@@ -32,6 +32,12 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Opening splash (temporary): the thumbnail motion, played once over the app. Dark from
+         the first paint so nothing flashes before it starts; see src/splash/splash.js. -->
+    <div id="splash" style="position: fixed; inset: 0; z-index: 9999; background: #131316">
+      <canvas style="display: block; width: 100%; height: 100%"></canvas>
+    </div>
+    <script type="module" src="/src/splash/splash.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -7,7 +7,7 @@
 // - One global palette; pixels unchanged from the previous frame are transparent, which
 //   keeps the file small (only the moving area is stored for each frame).
 import { GIFEncoder, quantize, applyPalette } from "https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js";
-import { draw, W, H, T } from "./motion.js";
+import { draw, W, H, T } from "../../src/splash/motion.js";
 
 const STEP = 40;
 
