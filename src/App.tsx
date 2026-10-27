@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  Avatar, Badge, Button, Checkbox, DateFilter, DateInput, DatePicker, DateRangePicker, Filter, Icon, iconNames, Navigation, NavItem,
+  Avatar, Badge, Button, Checkbox, DateFilter, Logo, DateInput, DatePicker, DateRangePicker, Filter, Icon, iconNames, Navigation, NavItem,
   Radio, Tab, TextArea, TextInput, Toast, ToastProvider, Toggle, useToast, type AvatarSize, type DateFilterValue, type BadgeStatus,
   type ButtonProps, type NavigationSection, type ToastType,
 } from "./components";
@@ -204,6 +204,17 @@ function Gallery() {
             <div className="gallery__picker">
               <DateRangePicker value={range} onChange={setRange} />
             </div>
+          </div>
+        </Section>
+
+        <Section id="logo" title="Logo">
+          <div className="logo-grid">
+            {(["primary", "white", "black"] as const).map((color) => (
+              <div key={color} className={color === "white" ? "logo-grid__tile is-dark" : "logo-grid__tile"}>
+                <Logo color={color} height={28} />
+                <Logo type="mark" color={color} height={28} />
+              </div>
+            ))}
           </div>
         </Section>
 

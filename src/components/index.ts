@@ -29,3 +29,4 @@ export * from "./DatePicker";
 export * from "./DateRangePicker";
 export { ScrollThumb } from "./internal/ScrollThumb";
 export * from "./Toast";
+export * from "./Logo";

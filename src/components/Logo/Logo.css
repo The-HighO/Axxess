@@ -1,0 +1,5 @@
+/* Logo colours, from the Figma Logo page */
+.axo-logo { display: block; flex: none; }
+.axo-logo--primary { color: var(--primary-base); }
+.axo-logo--white { color: var(--white); }
+.axo-logo--black { color: var(--grayscale-900); }

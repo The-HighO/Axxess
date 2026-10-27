@@ -36,3 +36,8 @@ body { margin: 0; background: var(--white); color: var(--grayscale-800); font-fa
   .toast-grid__row .axo-toast--inline .axo-toast__title { white-space: normal; }
   .toast-grid__row .axo-toast--stacked { width: 100%; }
 }
+
+/* Logo variants: white sits on grayscale-950 so it shows */
+.logo-grid { display: flex; flex-wrap: wrap; gap: var(--space-m); }
+.logo-grid__tile { display: flex; align-items: center; gap: var(--space-xl); padding: var(--space-xl); border: 1px solid var(--grayscale-150); border-radius: var(--radius-md); }
+.logo-grid__tile.is-dark { background: var(--grayscale-950); border-color: var(--grayscale-950); }
