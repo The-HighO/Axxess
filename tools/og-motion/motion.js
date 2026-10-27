@@ -20,11 +20,11 @@ const DARK = BG; // the tick and the chevron are cut-outs in the background colo
 
 // Timeline (ms)
 export const T = {
-  current: 1000, // loader has spun for a second; it spins out into the half fill (820ms)
-  done: 2100, // half fill → disc + tick (520ms)
-  morph: 3000, // circle → Icon Mark (600ms)
-  reveal: 3900, // mark slides left, wordmark revealed (720ms)
-  end: 4620,
+  current: 1000, // loader has spun for a second; it slows to a stop as its lines close into the ring (900ms)
+  done: 2300, // half fill → disc + tick (520ms)
+  morph: 3200, // circle → Icon Mark (600ms)
+  reveal: 4100, // mark slides left, wordmark revealed (720ms)
+  end: 4820,
   hold: 2600, // final logo holds before the loop starts again
 };
 
@@ -62,7 +62,6 @@ function bezier(x1, y1, x2, y2) {
 }
 const easeOutSoft = bezier(0.22, 1, 0.36, 1); // the system's soft landing
 const easeInOut = bezier(0.65, 0, 0.35, 1);
-const easeSpin = bezier(0.45, 0, 0.25, 1);
 
 const LOADER = new Path2D(
   "M10 2.5V5M10 15V17.5M4.697 4.697L6.465 6.464M13.536 13.536L15.304 15.303M2.5 10H5M15 10H17.5M4.697 15.303L6.465 13.536M13.536 6.464L15.304 4.697",
@@ -106,14 +105,16 @@ export function draw(ctx, t) {
   // 1 → 2: the loader spins, then makes one slowing turn. As it slows, its broken lines close
   // into the ring: each line shortens towards its outer end while an arc grows out of it both
   // ways along the ring, until the eight arcs meet, turning green and thinning to the ring's weight.
-  const RING_CLOSED = 640;
+  const RING_CLOSED = 900;
   if (t < T.current + RING_CLOSED) {
-    const spinIn = T.current / 1000;
     let rotate = (Math.min(t, T.current) / 1000) * 360;
     let k = 0;
     if (t >= T.current) {
-      rotate = spinIn * 360 + 360 * easeSpin(clamp((t - T.current) / RING_CLOSED));
-      k = easeOutSoft(clamp((t - T.current - 160) / (RING_CLOSED - 160)));
+      // Slows from its running speed (360°/s) to a stop with no hitch: a cubic ease-out whose
+      // starting speed matches, so it turns 360 × 0.9 / 3 = 108° more.
+      const e = clamp((t - T.current) / RING_CLOSED);
+      rotate += ((360 * RING_CLOSED) / 1000 / 3) * (1 - (1 - e) ** 3);
+      k = easeInOut(clamp((t - T.current - 100) / (RING_CLOSED - 100)));
     }
     inIcon(ctx, x, () => {
       ctx.strokeStyle = mix(WHITE, GREEN, k);
@@ -164,7 +165,7 @@ export function draw(ctx, t) {
     }, { alpha: under });
   }
   if (t >= T.current && t < T.morph) {
-    let half = grow(560);
+    let half = grow(860);
     inIcon(ctx, x, () => {
       ctx.fillStyle = mix(GREEN, GREEN, 0);
       ctx.fill(HALF);
