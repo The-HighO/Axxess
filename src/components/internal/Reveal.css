@@ -5,6 +5,8 @@
 .axo-reveal {
   --reveal-open: 480ms cubic-bezier(0.22, 1, 0.36, 1);
   --reveal-close: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Wait before opening (set by the delay prop), e.g. to follow another element's exit */
+  --reveal-delay: 0ms;
   display: grid;
   /* Inside a flex column (like a card) it must not shrink, or the 1fr row collapses to 0 */
   flex: none;
@@ -13,7 +15,7 @@
 }
 .axo-reveal.is-shown {
   grid-template-rows: 1fr;
-  transition: grid-template-rows var(--reveal-open);
+  transition: grid-template-rows var(--reveal-open) var(--reveal-delay);
 }
 .axo-reveal__inner {
   min-height: 0;
@@ -25,7 +27,9 @@
 .axo-reveal.is-shown > .axo-reveal__inner {
   opacity: 1;
   transform: none;
-  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1) 80ms, transform var(--reveal-open);
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--reveal-delay) + 80ms),
+    transform var(--reveal-open) var(--reveal-delay);
 }
 /* Fully open: stop clipping so focus rings and shadows inside show */
 .axo-reveal.is-settled > .axo-reveal__inner { overflow: visible; }

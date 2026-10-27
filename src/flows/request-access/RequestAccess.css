@@ -62,6 +62,19 @@
 .ra-cards { display: flex; flex-direction: column; gap: var(--space-xl); }
 .ra-cards .axo-field { max-width: none; }
 .ra-card--loose .axo-option-card__body { gap: var(--space-xxl); }
+/* Details that appear from a selection (Beneficiary details, Application details): the space
+   above them opens with them instead of appearing first, so the reveal cancels its container's
+   gap and carries it inside. 40px inside a card, 24px between the cards of a step. */
+.ra-details-reveal { --details-gap: var(--space-xxl); margin-top: calc(-1 * var(--details-gap)); }
+.ra-cards > .ra-details-reveal { --details-gap: var(--space-xl); }
+.ra-details { padding-top: var(--details-gap); }
+/* Picking a different person: the new details fade up into place (the dropdown's settle).
+   On the first pick this is over before the reveal's own delayed fade begins, so it only shows on a change. */
+.ra-details { animation: ra-details-in 240ms cubic-bezier(0.33, 1, 0.68, 1); }
+@keyframes ra-details-in { from { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) {
+  .ra-details { animation: none; }
+}
 .ra-reason { max-width: none; }
 
 /* A solid card for summaries (application details, review) */

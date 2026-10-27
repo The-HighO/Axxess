@@ -1,6 +1,8 @@
 import { cx } from "../internal/cx";
-import { Icon } from "../Icon";
+import { Reveal } from "../internal/Reveal";
+import { StepIcon } from "./StepIcon";
 import "./Stepper.css";
+import "./StepIcon.css";
 
 export interface StepperStep {
   id: string;
@@ -35,11 +37,19 @@ export interface StepperProps {
   className?: string;
 }
 
-const ICON: Record<StepStatus, "check-circle" | "contrast" | "loader"> = {
-  done: "check-circle",
-  current: "contrast",
-  pending: "loader",
-};
+/**
+ * A label that can be emphasised without changing size: a regular and a medium copy sit in
+ * the same spot and cross-fade, so moving between steps never stretches or shrinks the text.
+ * The medium copy is hidden from screen readers.
+ */
+function Label({ text, hidden }: { text: string; hidden?: boolean }) {
+  return (
+    <span className="axo-stepper__label" aria-hidden={hidden || undefined}>
+      <span className="axo-stepper__label-base">{text}</span>
+      <span className="axo-stepper__label-strong" aria-hidden="true">{text}</span>
+    </span>
+  );
+}
 
 /** Vertical progress for multi-step forms: done, current (with its sub-steps) and upcoming steps. */
 export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate, onStepClick, layout = "vertical", className }: StepperProps) {
@@ -71,10 +81,11 @@ export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate,
               !!onStepClick && !here && (canNavigate ? canNavigate(step.id, s.id) : subStatus(step.id, subs, j) === "done");
             return (
               <li key={s.id} className={cx("axo-stepper__sub", here && "is-current")} aria-current={here ? "step" : undefined}>
-                {navigable ? (
-                  <button type="button" onClick={() => onStepClick!(step.id, s.id)}>{s.label}</button>
-                ) : (
-                  s.label
+                {/* The label stays the same element whether or not it's clickable (so its emphasis
+                    can fade); when it is, a transparent button covers it. */}
+                <Label text={s.label} hidden={navigable} />
+                {navigable && (
+                  <button type="button" className="axo-stepper__hit" aria-label={s.label} onClick={() => onStepClick!(step.id, s.id)} />
                 )}
               </li>
             );
@@ -101,8 +112,8 @@ export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate,
             const isCurrent = step.id === current;
             const head = (
               <>
-                <Icon name={ICON[status]} size={20} className={`axo-stepper__icon is-${status}`} />
-                <span className={isCurrent ? undefined : "axo-visually-hidden"}>{step.label}</span>
+                <StepIcon status={status} className="axo-stepper__icon" />
+                <span className={isCurrent ? undefined : "axo-visually-hidden"}><Label text={step.label} hidden={headNavigable(step, i)} /></span>
               </>
             );
             return (
@@ -112,16 +123,22 @@ export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate,
                 aria-current={isCurrent ? "step" : undefined}
                 title={isCurrent ? undefined : step.label}
               >
-                {headNavigable(step, i) ? (
-                  <button type="button" className="axo-stepper__head" onClick={() => onStepClick!(step.id)}>{head}</button>
-                ) : (
-                  <div className="axo-stepper__head">{head}</div>
-                )}
+                <div className="axo-stepper__head">
+                  {head}
+                  {headNavigable(step, i) && (
+                    <button type="button" className="axo-stepper__hit" aria-label={step.label} onClick={() => onStepClick!(step.id)} />
+                  )}
+                </div>
               </li>
             );
           })}
         </ol>
-        {currentIndex >= 0 && subsBlock(steps[currentIndex])}
+        {/* One box under the row: a new step's sub-steps fade in place of the last step's */}
+        {currentIndex >= 0 && (steps[currentIndex].substeps?.length ?? 0) > 0 && (
+          <div key={steps[currentIndex].id} className="axo-stepper__subs-swap">
+            {subsBlock(steps[currentIndex])}
+          </div>
+        )}
       </nav>
     );
   }
@@ -134,8 +151,8 @@ export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate,
           const isCurrent = step.id === current;
           const head = (
             <>
-              <Icon name={ICON[status]} size={20} className={`axo-stepper__icon is-${status}`} />
-              <span>{step.label}</span>
+              <StepIcon status={status} className="axo-stepper__icon" />
+              <Label text={step.label} hidden={headNavigable(step, i)} />
             </>
           );
           return (
@@ -144,12 +161,18 @@ export function Stepper({ steps, current, currentSubstep, statusOf, canNavigate,
               className={cx("axo-stepper__step", `is-${status}`, isCurrent && "is-here")}
               aria-current={isCurrent ? "step" : undefined}
             >
-              {headNavigable(step, i) ? (
-                <button type="button" className="axo-stepper__head" onClick={() => onStepClick!(step.id)}>{head}</button>
-              ) : (
-                <div className="axo-stepper__head">{head}</div>
+              <div className="axo-stepper__head">
+                {head}
+                {headNavigable(step, i) && (
+                  <button type="button" className="axo-stepper__hit" aria-label={step.label} onClick={() => onStepClick!(step.id)} />
+                )}
+              </div>
+              {/* Every step with sub-steps keeps its box; moving between steps closes the old one as the new one opens */}
+              {(step.substeps?.length ?? 0) > 0 && (
+                <Reveal open={isCurrent} className="axo-stepper__reveal">
+                  {subsBlock(step)}
+                </Reveal>
               )}
-              {isCurrent && subsBlock(step)}
             </li>
           );
         })}

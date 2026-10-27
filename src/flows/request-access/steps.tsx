@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
-  Avatar, Combobox, DateInput, DetailList, Divider, OptionCard, TextArea, formatDate, useActiveCard,
+  Avatar, Combobox, DateInput, Reveal, DetailList, Divider, OptionCard, TextArea, formatDate, useActiveCard,
   type ComboboxOption,
 } from "../../components";
 import {
@@ -21,6 +21,11 @@ const today = () => new Date().toISOString().slice(0, 10);
 /* ---------- Initiate request: Beneficiary ---------- */
 export function BeneficiaryStep({ draft, update }: StepProps) {
   const picked = draft.beneficiaryId ? personById(draft.beneficiaryId) : null;
+  // The details reveal once someone is picked (after the list has started to fade, 100ms) and
+  // fade in afresh when a different person is picked. The last person stays shown while it closes.
+  const lastPicked = useRef(picked);
+  if (picked) lastPicked.current = picked;
+  const shownPerson = picked ?? lastPicked.current;
   const options: ComboboxOption[] = beneficiaryOptions.map((p) => ({
     value: p.id,
     label: p.name,
@@ -57,17 +62,21 @@ export function BeneficiaryStep({ draft, update }: StepProps) {
           searchPlaceholder="Search by name or email"
           groupByInitial
         />
-        {picked && (
-          <DetailList
-            title="Beneficiary details"
-            rows={[
-              { label: "Name", ...personValue(picked) },
-              { label: "Role", value: picked.role },
-              { label: "Team", value: picked.team },
-              { label: "Manager", ...personValue(personById(picked.managerId)) },
-            ]}
-          />
-        )}
+        <Reveal open={!!picked} delay={100} className="ra-details-reveal">
+          {shownPerson && (
+            <div key={shownPerson.id} className="ra-details">
+              <DetailList
+                title="Beneficiary details"
+                rows={[
+                  { label: "Name", ...personValue(shownPerson) },
+                  { label: "Role", value: shownPerson.role },
+                  { label: "Team", value: shownPerson.team },
+                  { label: "Manager", ...personValue(personById(shownPerson.managerId)) },
+                ]}
+              />
+            </div>
+          )}
+        </Reveal>
       </OptionCard>
     </div>
   );
@@ -76,6 +85,10 @@ export function BeneficiaryStep({ draft, update }: StepProps) {
 /* ---------- Initiate request: Application ---------- */
 export function ApplicationStep({ draft, update }: StepProps) {
   const app = draft.applicationId ? applicationById(draft.applicationId) : null;
+  // Same as Beneficiary details: reveal after the list starts fading, fade afresh on a change.
+  const lastApp = useRef(app);
+  if (app) lastApp.current = app;
+  const shownApp = app ?? lastApp.current;
   return (
     <div className="ra-cards">
       <Combobox
@@ -85,18 +98,22 @@ export function ApplicationStep({ draft, update }: StepProps) {
         onChange={(id) => update({ applicationId: id, additionalAccess: false, accessLevelId: null })}
         searchPlaceholder="Search by name"
       />
-      {app && (
-        <div className="ra-summary is-active">
-          <DetailList
-            title="Application details"
-            rows={[
-              { label: "Type", value: app.type },
-              { label: "Risk", value: app.risk },
-              { label: "Provisioning", value: app.provisioning },
-            ]}
-          />
-        </div>
-      )}
+      <Reveal open={!!app} delay={100} className="ra-details-reveal">
+        {shownApp && (
+          <div key={shownApp.id} className="ra-details">
+            <div className="ra-summary is-active">
+              <DetailList
+                title="Application details"
+                rows={[
+                  { label: "Type", value: shownApp.type },
+                  { label: "Risk", value: shownApp.risk },
+                  { label: "Provisioning", value: shownApp.provisioning },
+                ]}
+              />
+            </div>
+          </div>
+        )}
+      </Reveal>
     </div>
   );
 }

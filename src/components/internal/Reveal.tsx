@@ -1,10 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cx } from "./cx";
 import "./Reveal.css";
 
 interface RevealProps {
   open: boolean;
   children: ReactNode;
+  /** Milliseconds to wait before opening, e.g. to start as something else finishes leaving. */
+  delay?: number;
   className?: string;
 }
 
@@ -18,7 +20,7 @@ const CLOSE_FALLBACK_MS = 400;
  * and unmounts once closed. Height runs on `grid-template-rows` (0fr ↔ 1fr), so it works for
  * any content height without measuring.
  */
-export function Reveal({ open, children, className }: RevealProps) {
+export function Reveal({ open, children, delay = 0, className }: RevealProps) {
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(open);
   // Fully open: clipping off, so focus rings and shadows inside aren't cut.
@@ -29,7 +31,7 @@ export function Reveal({ open, children, className }: RevealProps) {
     if (open) {
       setMounted(true);
       setSettled(false);
-      const timer = window.setTimeout(() => setSettled(true), OPEN_FALLBACK_MS);
+      const timer = window.setTimeout(() => setSettled(true), OPEN_FALLBACK_MS + delay);
       return () => window.clearTimeout(timer);
     }
     setSettled(false);
@@ -52,6 +54,7 @@ export function Reveal({ open, children, className }: RevealProps) {
     <div
       ref={rootRef}
       className={cx("axo-reveal", shown && "is-shown", settled && "is-settled", className)}
+      style={delay ? ({ "--reveal-delay": `${delay}ms` } as CSSProperties) : undefined}
       aria-hidden={!open || undefined}
       onTransitionEnd={(e) => {
         if (e.target !== rootRef.current || e.propertyName !== "grid-template-rows") return;

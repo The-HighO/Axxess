@@ -30,3 +30,4 @@ export * from "./DateRangePicker";
 export { ScrollThumb } from "./internal/ScrollThumb";
 export * from "./Toast";
 export * from "./Logo";
+export { Reveal } from "./internal/Reveal";

@@ -1,0 +1,68 @@
+/* Step icon (StepIcon.tsx). Layers show or hide by status; the motion runs only on a change
+   (.from-*). Easing matches the system: soft ease-outs, no overshoot. */
+.axo-step-icon { display: block; flex: none; overflow: visible; }
+.axo-step-icon > * { transform-box: fill-box; transform-origin: center; }
+.axo-step-icon__loader { stroke: var(--grayscale-400); opacity: 0; }
+.axo-step-icon__ring { stroke: var(--primary-base); opacity: 0; }
+.axo-step-icon__half,
+.axo-step-icon__disc { fill: var(--primary-base); opacity: 0; }
+.axo-step-icon__tick { stroke: var(--white); stroke-dasharray: 1; stroke-dashoffset: 1; }
+
+.axo-step-icon.is-pending .axo-step-icon__loader { opacity: 1; }
+.axo-step-icon.is-current .axo-step-icon__ring,
+.axo-step-icon.is-current .axo-step-icon__half { opacity: 1; }
+.axo-step-icon.is-done .axo-step-icon__ring,
+.axo-step-icon.is-done .axo-step-icon__disc { opacity: 1; }
+.axo-step-icon.is-done .axo-step-icon__tick { stroke-dashoffset: 0; }
+
+/* pending → current: one spin of the loader that slows and fades out, then the ring and the
+   half fill grow into place just behind it. */
+.axo-step-icon.is-current.from-pending .axo-step-icon__loader {
+  animation: axo-step-spin 640ms cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+.axo-step-icon.is-current.from-pending .axo-step-icon__ring {
+  animation: axo-step-grow 360ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
+}
+.axo-step-icon.is-current.from-pending .axo-step-icon__half {
+  animation: axo-step-grow 360ms cubic-bezier(0.22, 1, 0.36, 1) 460ms both;
+}
+@keyframes axo-step-spin {
+  0% { opacity: 1; transform: rotate(0); }
+  65% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(360deg) scale(0.7); }
+}
+@keyframes axo-step-grow {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+
+/* current → done: the disc fills out from the half (240ms), then the tick is drawn along its
+   path, short stroke first, then the long one (320ms). */
+.axo-step-icon.is-done.from-current .axo-step-icon__half,
+.axo-step-icon.is-done.from-pending .axo-step-icon__half {
+  animation: axo-step-hand-off 240ms ease-out both;
+}
+.axo-step-icon.is-done.from-current .axo-step-icon__disc,
+.axo-step-icon.is-done.from-pending .axo-step-icon__disc {
+  animation: axo-step-fill 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.axo-step-icon.is-done.from-current .axo-step-icon__tick,
+.axo-step-icon.is-done.from-pending .axo-step-icon__tick {
+  animation: axo-step-tick 320ms cubic-bezier(0.65, 0, 0.35, 1) 200ms both;
+}
+@keyframes axo-step-hand-off {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes axo-step-fill {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes axo-step-tick {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .axo-step-icon * { animation: none !important; }
+}
