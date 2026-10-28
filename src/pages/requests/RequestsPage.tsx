@@ -252,7 +252,7 @@ export function RequestsPage({ initialOpenId = null }: Props) {
                       <td>
                         <span className="rq-person rq-person--lg">
                           <Avatar size={30} name={beneficiary.name} color={beneficiary.color} />
-                          {beneficiary.name}
+                          <span className="rq-person__name">{beneficiary.name}</span>
                         </span>
                       </td>
                       <td>{applicationById(r.applicationId).name}</td>

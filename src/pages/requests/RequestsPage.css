@@ -19,7 +19,9 @@
 .rq__table-wrap { overflow-x: auto; }
 .rq-table {
   width: 100%;
-  min-width: 960px;
+  /* The fixed columns take 867px; the rest goes to Beneficiary, which keeps at least ~200px.
+     Narrower screens scroll the table sideways instead of squeezing it. */
+  min-width: 1070px;
   border-collapse: collapse;
   table-layout: fixed;
   font: 400 14px/var(--leading) var(--font-sans);
@@ -84,6 +86,10 @@
 .rq-table__empty:hover { background: none !important; }
 
 .rq-person { display: inline-flex; align-items: center; gap: var(--space-xs); font-weight: 500; color: var(--grayscale-800); }
+/* In the table the name shrinks with its column and ends in "…" rather than being cut */
+.rq-person--lg { max-width: 100%; vertical-align: middle; }
+.rq-person--lg > .axo-avatar { flex: none; }
+.rq-person__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .rq-approvers { display: inline-flex; align-items: center; gap: var(--space-xs); }
 .rq-approvers__icon { color: var(--primary-base); }
 
