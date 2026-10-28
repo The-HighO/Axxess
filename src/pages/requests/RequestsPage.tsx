@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Avatar, Button, Checkbox, DateFilter, FilterMenu, inRange, Icon, Pagination, SearchField, Tab, useToast,
+  Avatar, Button, Checkbox, DateFilter, FilterMenu, inRange, Icon, Pagination, SearchField, Tab, TabList, useToast,
   type DateFilterValue,
 } from "../../components";
 import { CURRENT_USER_ID, applicationById, applications, people, personById } from "../../data/directory";
@@ -172,11 +172,11 @@ export function RequestsPage({ initialOpenId = null }: Props) {
               Request access
             </Button>
           </div>
-          <div className="rq__tabs" role="tablist" aria-label="Request lists">
+          <TabList className="rq__tabs" aria-label="Request lists">
             {TABS.map((t) => (
               <Tab key={t.id} active={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</Tab>
             ))}
-          </div>
+          </TabList>
         </div>
 
         <div className="rq__body">

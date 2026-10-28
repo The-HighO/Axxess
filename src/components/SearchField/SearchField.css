@@ -9,7 +9,9 @@
   border-radius: 100px;
   background: var(--white);
   cursor: text;
+  transition: border-color 200ms ease;
 }
+/* Active (focused): the outline darkens and the ⌘K hint folds away; both ease back on blur */
 .axo-search:focus-within { border-color: var(--grayscale-900); }
 .axo-search > .axo-icon { color: var(--grayscale-400); }
 .axo-search input {
@@ -41,17 +43,26 @@
   color: var(--grayscale-400);
   cursor: pointer;
 }
+.axo-search__clear { animation: axo-search-clear-in 180ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes axo-search-clear-in { from { opacity: 0; transform: scale(0.8); } }
 .axo-search__clear:hover { color: var(--grayscale-700); }
 .axo-search__clear:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
-/* Active (focused or holding text): the ⌘K hint gives way */
-.axo-search:focus-within .axo-search__kbd,
-.axo-search.has-value .axo-search__kbd { display: none; }
 .axo-search__kbd {
+  box-sizing: border-box;
   display: inline-flex;
+  flex: none;
   align-items: center;
   gap: 2px;
+  max-width: 40px;
   height: 20px;
   padding: 0 6px;
+  overflow: hidden;
+  transition:
+    opacity 160ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 240ms cubic-bezier(0.22, 1, 0.36, 1);
   border: 0.5px solid var(--grayscale-50);
   border-radius: 100px;
   background: var(--white);
@@ -59,7 +70,23 @@
   color: var(--grayscale-400);
   font: 500 10px/15px var(--font-inter);
 }
+/* Active (focused or holding text): the ⌘K hint fades and folds to nothing (taking the gap
+   before it), so the clear button can sit at the end */
+.axo-search:focus-within .axo-search__kbd,
+.axo-search.has-value .axo-search__kbd {
+  max-width: 0;
+  margin-left: -6px;
+  padding: 0;
+  border-width: 0;
+  opacity: 0;
+  transform: scale(0.9);
+}
 /* Phones and touch screens have no ⌘K to press, so the hint just takes up room there */
 @media (max-width: 600px), (hover: none) and (pointer: coarse) {
   .axo-search__kbd { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .axo-search,
+  .axo-search__kbd { transition: none; }
+  .axo-search__clear { animation: none; }
 }

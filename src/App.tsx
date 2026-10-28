@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Avatar, Badge, Button, Checkbox, DateFilter, Logo, DateInput, DatePicker, DateRangePicker, Filter, Icon, iconNames, Navigation, NavItem,
-  Radio, Tab, TextArea, TextInput, Toast, ToastProvider, Toggle, useToast, type AvatarSize, type DateFilterValue, type BadgeStatus,
+  Radio, Tab, TabList, TextArea, TextInput, Toast, ToastProvider, Toggle, useToast, type AvatarSize, type DateFilterValue, type BadgeStatus,
   type ButtonProps, type NavigationSection, type ToastType,
 } from "./components";
 import { applicationById, personById } from "./data/directory";
@@ -237,11 +237,11 @@ function Gallery() {
         </Section>
 
         <Section id="tabs" title="Tabs">
-          <div className="row row--tabs" role="tablist" aria-label="Requests">
+          <TabList className="row row--tabs" aria-label="Requests">
             {["Pending", "Approved", "Rejected", "All"].map((t) => (
               <Tab key={t} active={tab === t} onClick={() => setTab(t)}>{t}</Tab>
             ))}
-          </div>
+          </TabList>
         </Section>
 
         <Section id="nav-item" title="Nav item">

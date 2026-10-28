@@ -10,6 +10,7 @@
   font: 500 14px/var(--leading) var(--font-sans);
   letter-spacing: var(--tracking);
   cursor: pointer;
+  transition: color 200ms ease;
 }
 .axo-tab__label {
   box-sizing: border-box;
@@ -22,7 +23,31 @@
   white-space: nowrap;
 }
 .axo-tab__bar { height: 2px; background: var(--grayscale-800); opacity: 0; }
+.axo-tab:hover { color: var(--grayscale-700); }
 .axo-tab.is-active { color: var(--grayscale-800); }
 .axo-tab.is-active .axo-tab__label { border-radius: var(--radius-xs); }
 .axo-tab.is-active .axo-tab__bar { opacity: 1; }
 .axo-tab:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+/* TabList: the tabs' own bars give way to one shared underline that glides between tabs.
+   It's placed without motion first (no .is-ready), then moves with the soft landing. */
+.axo-tablist { position: relative; }
+.axo-tablist .axo-tab__bar { visibility: hidden; }
+.axo-tablist__bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--grayscale-800);
+  pointer-events: none;
+}
+.axo-tablist__bar.is-ready {
+  transition:
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .axo-tab,
+  .axo-tablist__bar.is-ready { transition: none; }
+}

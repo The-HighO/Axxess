@@ -16,6 +16,9 @@
   outline: none;
 }
 .axo-menu__list--end { left: auto; right: 0; }
+/* Not enough room below: it opens upwards from the button (Popover.css rises it from below) */
+.axo-menu__list--above { top: auto; bottom: calc(100% + 4px); }
+.axo-menu__list--above.is-end { transform-origin: bottom right; }
 .axo-menu__item {
   display: flex;
   flex-direction: column;

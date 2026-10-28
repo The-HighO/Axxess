@@ -1,5 +1,6 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "../internal/cx";
+import { scrollParent } from "../internal/ScrollThumb";
 import { usePresence } from "../internal/usePresence";
 import "../internal/Popover.css";
 import "./Menu.css";
@@ -35,7 +36,14 @@ export interface MenuProps {
   className?: string;
 }
 
-/** Popover menu on the dropdown surface (cards-shadow-large), opened from any button. */
+/** Space kept between an open menu and the bottom of the visible area. */
+const SCREEN_MARGIN = 24;
+
+/**
+ * Popover menu on the dropdown surface (cards-shadow-large), opened from any button. It opens
+ * below the button, or above it when there isn't room below (such as at the foot of a page),
+ * so it's never cut off; either way it settles in with the system's popover motion.
+ */
 export function Menu({ trigger, items, align = "start", label, minWidth = 200, className }: MenuProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -48,6 +56,23 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const enabled = items.map((it, i) => (it.disabled ? -1 : i)).filter((i) => i >= 0);
+  const [above, setAbove] = useState(false);
+
+  // Pick a side as it opens, before it's painted (and keep it while it fades out).
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = triggerRef.current;
+    const list = listRef.current;
+    if (!trigger || !list) return;
+    const box = trigger.getBoundingClientRect();
+    const scroller = scrollParent(trigger);
+    const bottom = Math.min(window.innerHeight, scroller ? scroller.getBoundingClientRect().bottom : Infinity);
+    const top = Math.max(0, scroller ? scroller.getBoundingClientRect().top : 0);
+    const needed = list.offsetHeight + 4 + SCREEN_MARGIN;
+    const roomBelow = bottom - box.bottom;
+    const roomAbove = box.top - top;
+    setAbove(roomBelow < needed && roomAbove > roomBelow);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -113,7 +138,7 @@ export function Menu({ trigger, items, align = "start", label, minWidth = 200, c
           aria-label={label}
           tabIndex={-1}
           aria-activedescendant={highlight ? `${id}-item-${active}` : undefined}
-          className={cx("axo-menu__list", "axo-pop", align === "end" && "axo-menu__list--end is-end", leaving && "is-leaving")}
+          className={cx("axo-menu__list", "axo-pop", align === "end" && "axo-menu__list--end is-end", above && "axo-menu__list--above is-above", leaving && "is-leaving")}
           style={{ minWidth }}
           onKeyDown={onListKey}
         >
